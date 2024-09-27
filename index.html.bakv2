@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<title>CT</title>
+<head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<style>
+      html {
+        font-family: monospace;
+		background-color: black;
+		color: white;
+		text-align: left;
+		overflow:hidden;
+		font-family: monospace;
+        font-size: 17px;
+		background-color: black;
+		color: white;
+      }
+      
+      h1{
+		width: 100%;
+		height: 10%;
+		position: fixed;
+		
+		text-align: left;
+		padding: 20px;
+		top: 0;
+		overflow:hidden;
+		z-index:100;
+	  }
+      #chatbox {
+        margin-left: auto;
+        margin-right: auto;
+        width: 40%;
+        margin-top: 60px;
+		text-align: right;
+      }
+	
+  
+      #textInput {
+		padding: 20px;
+        width: 100%;
+        border: black;
+		background-color: black;
+		color: white;
+      }
+      #right{text-align: right;}
+
+      .botText {
+        color: white;
+        font-family: monospace;
+        font-size: 17px;
+        text-align: left;
+        line-height: 30px;
+      }
+      .botText span {
+        padding: 10px;
+      }
+
+      .boxed {
+		position:absolute;
+        margin-left: auto;
+        margin-right: auto;
+        width:calc(100%);
+		height:calc(80%);
+        margin-top: 60px;	
+		bottom:0;
+		overflow-y: scroll;
+
+		}
+
+ 
+	  a:link{
+		color:white;
+		text-decoration: none;
+		font-family: monospace;
+        font-size: 17px;
+	  }
+	  a:visited{
+		color:white;
+		text-decoration: none;
+		font-family: monospace;
+        font-size: 17px;
+	  }
+	  
+	  .intro{
+	  text-align: left;
+		}
+    </style>
+
+</head>
+
+<body onload="typeWriter()">
+<h1>
+<div id="bob">
+	CARRIER TECH ||
+	<a href="#" id="About" class="btn" onclick="reply_click(this.id)">  About  </a>  
+	<a href="#" id="Goals" class="btn" onclick="reply_click(this.id)">  Goals  </a>  
+		
+   
+  
+</a>
+</div>
+<div id="userInput">
+<input id="textInput" type="text" name="msg" placeholder="Type here to chat"  tabindex="-1"/>
+<input type="button" value="Send" onclick="getBotResponse()">
+</div>
+</h1>
+
+<div class="boxed">
+<div id="chatbox">
+
+	<p class="botText">
+		<div id = "intro" > 
+			</div>
+	</p>
+</div>
+
+</div>
+
+<script>
+
+	var i = 0;
+	var txt = 'Welcome to Carrier Technologies, we are focused on creating AI tools for Mental Health research and development as well as artists, and create an Artistic Community, to let artists focus on their work. I am one of the AI implemented, please ask me any questions and I will endeavour to answer, if I cannot answer I will default to an AI response built from Reddit data.';
+	var speed = 50;
+    function wsComm(the_string){
+        //$("#chatbox").prepend("<div class='right'>"+event.keyCode+"</div>");
+            console.log(the_string);
+        
+            var socket = new WebSocket("wss://88.98.228.164:8774/");
+            
+            socket.onopen = function(e) {
+                    //$("#chatbox").prepend("<div class='right'>"+the_string+"</div>");
+                    socket.send(the_string);  
+            };
+
+            socket.onmessage = function(event) {
+                    //console.log("received data");
+                    console.log(event.data);
+                    if (event.data instanceof Blob) {
+                         //var botHtml = '<p class="botText"><span>' + "got a blob" + "</span></p>";
+                         $("#chatbox").prepend(botHtml);//new File([event.data], "tts.mp3");
+                         var blob = event.data.slice(0, event.data.size, "audio/mp3");
+                         //console.log(blob);
+                         var blobUrl = URL.createObjectURL(blob);
+                         var link = document.createElement("a"); // Or maybe get it from the current document
+                         link.href = blobUrl;
+                         link.download = "tts.mp3";
+                         link.innerHTML = "Click here to download the file";
+                         var botHtml = '<p class="botText"><span>' + "a download should have start" + "</span></p>";
+                          $("#chatbox").prepend(link); 
+                    }else{	
+                         var botHtml = '<p class="botText"><span>' + event.data + "</span></p>";
+                         console.log(botHtml);
+			 $("#chatbox").prepend(botHtml);
+                    }          
+            };
+
+            socket.onclose = function(event) {
+                if (event.wasClean) {
+                    console.log('Connection closed cleanly') 
+                }else {
+                    console.error('[close] Connection died');
+                }												           
+            };
+
+            socket.onerror = function(error) {
+              alert(`[error] ${error.message}`);
+            };
+        
+    }
+	function typeWriter() {
+	  if (i < txt.length) {
+		document.getElementById("intro").innerHTML += txt.charAt(i);
+		i++;
+		setTimeout(typeWriter, speed);
+	  }
+	}	
+		
+		
+	function reply_click(clicked_id){
+		document.getElementById("textInput").value = clicked_id;
+		getBotResponse();
+		}
+	function getBotResponse() {
+        
+          var objDiv = document.getElementById("chatbox");
+          var rawText = $("#textInput").val();
+          var userHtml = '<p class="userText"><span>' + rawText + "</span></p>";
+          console.log(userHtml);
+          wsComm(rawText);
+          $("#textInput").val("");
+          $("#chatbox").prepend(userHtml);
+        
+    }
+  </script>
+	  
+</div>
+</body>
+</html>

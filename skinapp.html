@@ -1,0 +1,259 @@
+<style>
+html{
+	font-family:Garamond;
+	color:grey;
+	font-size: 4em;
+	border-radius: 25px;
+	}
+#container{
+	height:100%;
+	width:100%;
+	}
+#content, button {
+	position: absolute;
+	max-height:80%;
+	max-width:100%;
+	top:50%;
+	left:50%;
+	transform: translate(-60%, -50%);
+	}
+button, input, select{
+	border-radius: 25px;
+	position:relative;
+	background-color: grey;
+	border: none;
+	color: white;
+	font-family:Garamond;
+	padding:5% 10%;
+	text-align: center;
+	text-decoration: none;
+	bottom:0;
+}
+#rectangle {
+    border: 1px solid red;
+    position: absolute;
+}	
+p{ font-size:0.5em;
+	width:100%;
+	}
+
+img {
+	max-height:100%;
+	max-width:100%;
+}
+</style>
+
+<html>
+
+<body>
+<div id="container">
+	<div id="content">
+		<p>The Skin APP</p>
+		<button onclick="wsComm(this.id)" id = "Start">Start</button>
+
+	</div>
+
+</div>
+<div id="NextButton">
+</div>
+<form id="theForm" method = "POST" action = "/assess" enctype = "multipart/form-data">
+	<div id="save">
+		<input type="hidden" id="json_data" name = "json_data" value=""/>
+	</div>
+</form>
+</body>
+
+<script>
+var mdata = {"ptImage1":{}, "ptImage2":{}, "ptImage3":{}};
+
+function loadImage(evt){
+	console.log("Starting load");
+	var files = evt.target.files; 
+	var ptImage = document.getElementById("ptImage"); 
+	for (var i = 0, f; f = files[i]; i++) {
+	  if (!f.type.match('image.*')) {continue;}
+	  var reader = new FileReader();
+	  reader.onload = (function(theFile) {
+		return function(e) { 
+			ptImage.src = e.target.result;
+			mdata[ptImage.name]["raw"] = reader.result;
+			};		
+	  })(f);
+	  reader.readAsDataURL(f);
+	  var mFile = document.getElementById('file')
+	  mFile.setAttribute("id",ptImage.name);
+	  document.getElementById("save").appendChild(mFile);
+	  mFile.hidden = true;
+	  
+		 
+	  
+	}
+	initDraw(document.getElementById('container'),ptImage);
+}
+
+function wsComm(btnId){
+	if (btnId.includes("question-")){
+		var qs = btnId.split("-")[1]
+		
+		if (Number(qs)>0){
+			var s = document.getElementById("q"+qs);
+			s.setAttribute("name","q"+qs);
+			s.hidden = true;
+			document.getElementById("save").appendChild(s);
+			mdata["q"+qs]= s.value;
+		}
+		if (qs == "12"){
+			btnId = "result" + JSON.stringify(mdata);
+			//document.getElementById("theForm").submit();
+			}
+	}
+	let socket = new WebSocket("wss://carriertech.uk:8676/");
+	socket.onopen = function(e) {
+	  socket.send(btnId);
+	};
+
+	socket.onmessage = function(event) {
+		var rect = document.getElementById("rectangle")
+		if (rect){rect.remove();}
+		var rArray = JSON.parse(event.data);
+		document.getElementById("content").remove();
+		var container = document.getElementById("container");
+		var content = document.createElement("div");
+		content.setAttribute("id","content");
+		for (var key in rArray){
+			var obj = rArray[key];
+			if (key == "div"){
+				var newDiv = document.createElement(key);
+				newDiv.setAttribute("id","content")
+				document.getElementById("container").appendChild(newDiv)
+			
+			}else{
+				var newContent = document.createElement(key);
+				if (key == "p"){
+					newContent.innerHTML = rArray[key];
+				}else if (key == "select"){
+					for (sKey in obj){
+						newOption = document.createElement("option")
+						if (sKey == "id"){
+							newContent.setAttribute("id",obj[sKey]);
+						}else{
+							newOption.setAttribute("value",obj[sKey])
+							newOption.innerHTML = sKey;
+							newContent.appendChild(newOption)
+						}
+					}
+					initDraw(document.getElementById('save'),document.getElementById("ptImage"));
+				}else{
+					for (sKey in obj){
+						newContent.setAttribute(sKey,obj[sKey]);
+						if (sKey == "type" && obj[sKey] == "file"){
+							newContent.addEventListener('change', loadImage, false);
+						}else if (sKey == "name" && obj[sKey] == "Next"){
+							newContent.textContent = "Next";
+							
+							
+						}
+					}
+				}
+				//newDiv.appendChild(newContent);
+				if (key == "button"){
+					var NB = document.getElementById("NextButton")
+					for (let i=0; i<NB.children.length; i++){
+						NB.children[i].remove();
+						}
+					document.getElementById("NextButton").appendChild(newContent);
+				}else{
+					newDiv.appendChild(newContent);
+				}
+			}
+		}
+	};
+
+	socket.onclose = function(event) {
+	  if (event.wasClean) {
+		console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+	  } else {
+		// e.g. server process killed or network down
+		// event.code is usually 1006 in this case
+		console.error('[close] Connection died');
+	  }
+	};
+
+	socket.onerror = function(error) {
+	  console.log(error);
+	  console.log(error.message);
+	  alert(`[error] ${error.message}`);
+	};
+}
+
+function initDraw(canvas, ptImg) {
+  function setMousePosition(e) {
+	var ev = e || window.event; //Moz || IE
+	if (ev.pageX) { //Moz
+	  mouse.x = ev.pageX;// + window.pageXOffset;
+	  mouse.y = ev.pageY;// + window.pageYOffset;
+	} else if (ev.clientX) { //IE
+	  mouse.x = ev.clientX;// + document.body.scrollLeft;
+	  mouse.y = ev.clientY;// + document.body.scrollTop;
+	  
+	}
+	
+  };
+
+  var mouse = {
+	x: 0,
+	y: 0,
+	startX: 0,
+	startY: 0
+  };
+  var element = null;
+
+  canvas.onmousemove = function(e) {
+	setMousePosition(e);
+	if (element !== null) {
+	  element.style.width = Math.abs(mouse.x - mouse.startX) + 'px';
+	  element.style.height = Math.abs(mouse.y - mouse.startY) + 'px';
+	  element.style.left = (mouse.x - mouse.startX < 0) ? mouse.x + 'px' : mouse.startX + 'px';
+	  element.style.top = (mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px';	  
+	  }
+  }
+
+  canvas.onclick = function(e) {
+	if (element !== null && ptImg.getBoundingClientRect().left != 0) {	  
+		canvas.style.cursor = "default";
+		var bb = {
+			"boundingBox":{
+				"left":element.style.left,
+				"top":element.style.top,
+				"width":element.style.width,
+				"height":element.style.height},
+			"ptImg":{
+				"left":ptImg.getBoundingClientRect().left ,
+				"top":ptImg.getBoundingClientRect().top,
+				"width":ptImg.width ,
+				"height":ptImg.height}
+			};
+		mdata[ptImg.name]["data"] = bb;
+		document.getElementById("json_data").value = JSON.stringify(mdata);
+		document.getElementsByName("Next")[0].hidden = false;
+		element = null;
+		
+		} else {
+		if(document.getElementById("rectangle")){
+			document.getElementById("rectangle").remove();
+			}
+
+		mouse.startX = mouse.x;
+		mouse.startY = mouse.y;
+		element = document.createElement('div');
+		element.id = 'rectangle'
+		element.style.left = mouse.x + 'px';
+		element.style.top = mouse.y + 'px';
+		canvas.appendChild(element)
+		canvas.style.cursor = "crosshair";
+	}
+  }  
+}
+</script>
+</html>
+

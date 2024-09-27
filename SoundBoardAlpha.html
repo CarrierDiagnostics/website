@@ -1,0 +1,1172 @@
+<html>
+    <meta name="viewport" 
+      content="width=device-width, initial-scale=0.9, maximum-scale=0.9, user-scalable=0">
+    <style>
+        @font-face {
+            font-family: "Quicksand";
+            src: url("font/Quicksand-Bold.otf");
+        }
+        html{
+            font-family: "Quicksand";
+            color: #424242;font-size:1 rem; 
+           
+        }    
+        body { background-color: #e6e6e6; position: relative;width:99vw;height:99vh;overflow:hidden;
+            display: flex;
+            flex-direction: column;}
+        div{
+            box-shadow:0px 10px 20px -10px #747474;
+            padding: 0.5rem;
+            margin:0.2rem;
+            background-color: #ffffff;
+        }
+       
+        #mainScreen{ 
+            box-shadow:none;
+            background-color: #e6e6e6;
+            height:90vh;
+            display: flex;
+            flex-direction: row;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 1rem;
+            -webkit-overflow-scrolling: touch; /* Important for iOS devices */
+        }
+        #bottomDiv{position: relative; 
+            top: 50%; 
+            transform: translateY(-100%); box-shadow:none; 
+            width: 100%; padding:0; margin:0;}
+        
+        #canvas div{
+            display: inline-block;
+            height: 90%;
+            width:40%;
+            padding:auto;
+            margin:auto;
+            box-shadow: none;
+        }
+            .section {
+            display: none;
+            flex: 0 0 90%;
+            scroll-snap-align: center;
+            height: 80vh;
+            
+        }
+        ::-webkit-scrollbar-track {
+            background: #e6e6e6;
+        }
+        ::-webkit-scrollbar-thumb {
+        background: #910000;
+        border-radius: 10px;
+        height:3vh;
+        }
+        /* width */
+        ::-webkit-scrollbar {
+        width: 20px;
+        }
+        #topnav{
+            height:4vw;
+            box-shadow:none;
+            margin:0;
+            padding:auto;
+            
+        }
+        p{
+            margin:0; padding:0;width: 50%; float:left;
+        }
+        .startsHidden{
+            display: none;
+        }
+        #signOrLogin div{
+            box-shadow:none;
+        }
+        #signOrLogin img{
+            height:100%;
+        }
+        #child{
+        display:flex;
+        height:3vh;
+        box-shadow: none;
+        }
+        #inner{
+        font-size:calc(10px + 1vw);
+        position:block;
+        height:3vh;
+        box-shadow: none;
+        padding:auto;
+        }
+        .inner{
+            box-shadow: none;
+        }
+        #viewCatDiv{
+            left:0;
+            top:0;
+            display: none;
+            width:80vw;
+            height:80vh;
+            position: absolute;
+            padding:0.5rem;
+            margin:0.5rem;
+            border-radius: 25px;
+
+
+        }
+        #calGrid { 
+            margin: 0;
+             border: none; display: grid;
+             grid-template-columns: repeat(7, minmax(0, 1fr)); background-color: #ffffff;  
+             padding: 10px; overflow:hidden;
+             height:80%; width:90%;
+            }
+        #calNav{
+            box-shadow: none;
+            width:90%;
+            margin:0 auto;
+            position: relative;
+            
+        }
+        #calNav div{
+       
+            box-shadow: none;
+            display: inline;
+            padding: 1vw;
+            max-width: 30%;
+            text-align: right;
+        }
+        .day {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            font-size: 1em;
+            text-align: center;
+            display:flex;
+            margin:0;
+        }
+        #nextMonth, #lastMonth{
+            font-size: 4vw;
+        }
+        #currentMonth{
+            font-size: 8vw;
+        }
+        #sections{
+            float: left; height: 90%; width:40%; margin:0;
+            position: relative;
+            box-shadow: none;
+        }
+        #rants{
+            display: none;
+            height: 80%;
+            flex-direction: column;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            gap: 1rem;
+            -webkit-overflow-scrolling: touch; /* Important for iOS devices */
+        }
+        #sections div{
+            box-shadow: none;
+            height: 8%;
+        }
+        #emotion div{
+            height:40%;
+        }
+        #textBox{
+            overflow-y: scroll;
+        }
+        #languages{
+        display: none;
+        height: 50vh;
+        width:50%;
+        font-size: 1rem;
+        overflow: auto;
+        left: 0;
+        border: 1px solid black;
+        }
+        input {font-size: 1rem;}
+        #changeEmotion{
+            display: none;
+            float:left;
+            width:40%;
+            height:80vh;
+            z-index: 10000;
+            margin-top: 10%;
+            margin-left: 30%;
+        }
+        #changeEmotion div{
+            height:10%;
+        }
+        #terms{
+            display: none;
+            overflow:scroll ;
+            font-size: 1vw;
+        }
+    </style>
+    <body>
+        <div id="topnav"  >
+            <p>Welcome</p>
+            <img src="images/threedots42.png" style="float:right; height:100%;" onclick="showSettings()">
+        </div>
+        
+        <div id="mainScreen">
+            <div id="calendar" class="section">
+                <div id="calNav">
+                    <div id="currentMonth">Month</div>
+                    <div id="nextMonth" style="float:right;" onclick="changeMonth(1)"> Next </div>
+                    <div id="lastMonth" style="float:right;" onclick="changeMonth(-1)"> Last </div>
+                        
+                
+                </div>
+                <div id="calGrid">
+
+                </div>
+            </div>
+            <div id="emotion" class="section">
+                <div id="changeEmotion">
+                   
+                    <div id="calm" style="background-color: #75945b;"  onclick="changeEmotion(this)">Calm</div> 
+                    <div id='happy' style="background-color:#fff761;"  onclick="changeEmotion(this)">Happy</div> 
+                    <div id='sad' style="background-color:#6e79ff;" onclick="changeEmotion(this)">Sad</div> 
+                    <div id='angry' style="background-color: #ff4313;" onclick="changeEmotion(this)">Angry</div>
+                    <div id='fear' style="background-color: #ff8c2d;" onclick="changeEmotion(this)">Fearful</div> 
+                    <div id='disgust' style="background-color: #e564df;" onclick="changeEmotion(this)">Disgust</div> 
+                    <div id='surprise' style="background-color: #24c9ff;" onclick="changeEmotion(this)">Surprised</div> 
+                    <div id='love' style="background-color:#f3cec9" onclick="changeEmotion(this)">Love</div>
+                </div>
+                <div id="textBox"  class="inner">
+                
+                    <!--<audio id="audioControl" controls >
+                        <source id='audioReturn' type = 'audio/webm'>
+                    </audio>-->
+                    
+                </div>
+                
+                <div id="bottomDiv">
+                   
+                    <div id="canvas" >
+                        <div id="textEmotion" style="float:right;" ></div>
+                        <div id="prosodyEmotion"></div>
+                    </div>
+                    <input type="checkbox" id="useLLM">
+                    <label for="useLLM"> Use LLM for conversation</label><br>
+                    <img id="rec" style="display:block;position:absolute;left:50%; transform: translate(-50%); bottom:0%; margin: auto; height:30%;" src="images/rec.png">
+                </div>
+            </div>
+            <div id="rants" class="section"></div>
+            <div id="categorise" class="section">
+                
+                <div id="sections" >
+                    <div style="color:cyan;" onclick="viewCat(this)"  >Physical Environment</div>
+                    <div style="color:#B8860B;" onclick="viewCat(this)"   >Business/Career</div>
+                    <div style="color:#8FBC8F;" onclick="viewCat(this)"   >Finances</div>
+                    <div style="color:#FF8C00;" onclick="viewCat(this)"  >Health</div>
+                    <div style="color:#006400;" onclick="viewCat(this)"   >Family and Friends</div>
+                    <div style="color:#8B0000;" onclick="viewCat(this)"  >Romance</div>
+                    <div style="color:#8B008B;" onclick="viewCat(this)"  >Personal Growth</div>
+                    <div style="color:#808000;" onclick="viewCat(this)"  >Fun and Recreation</div>
+                </div>
+                <div id="viewCatDiv" >
+                    <img style="float: right;height:5%;" onclick="hideDiv(this.parentNode)" src="images/closered.png" >
+                    <div style="border:none;box-shadow: none;" id="catAnalysis"></div>
+                    <div id="textEmotionChart" width="90%" height="30%"></div>
+                    <div style="height: 40%; overflow-y: scroll;border:none;box-shadow: none;" id="catData"></div>
+                </div>
+            </div>
+            
+            
+            <div id="settings" class="section">
+                <ul style="list-style-type: none;">Settings
+                    <li>Language <div id="langaugeDiv">
+                        <input list="languages" id="languageChoice" value="English (United Kingdom)" readonly="readonly"><a onclick="changeLanguage(this)"> Change</a>
+                        <datalist id="languages">
+    
+                        </datalist>
+                    </div>    
+                    </li>
+                    <li onclick="signOut()">Sign Out</li>
+                    <li onclick="deleteAccount(this)">Delete Account</li>
+                    <li><label for="suggestions">Suggestions: </label><input id="suggestion" type="textarea" /> <a id="submitSuggestion" onclick="submitSuggestion()">Submit</a>
+                    </li>
+                </ul>
+                <div id="instruct" class="startsHidden">
+                    <p>Record what you are thinking or feeling</p>
+                    <img class="instructimg" src="images/instruct1.png">
+                    <p>The AI will dictate what you said and show the emotions it noticed</p>
+                    <img class="instructimg" src="images/instruct2.png">
+                    <p>If you don't agree with the emotion, you can tap it and it will be removed. The background colour should reflect how you are feeling.</p>
+                    <img class="instructimg" src="images/instruct3.png">
+                    <p>Repeat :)</p>
+                </div>
+                <div id="wIS" class="startsHidden">
+                    <p>Culturally, the importance of mental health is finally getting the recognition it deserves. Sadly our methods of measuring and analysing ones mental health is still plagued with subjectivity<a hred="https://pubmed.ncbi.nlm.nih.gov/35994049/">[1]</a>. This project is an attempt of creating baseline measurements which are free from subjectivity. We aim to implement  prosody and contextual measurements of emotions, keeping in mind individuals gender, culture, age, etc...</p>
+                    <p>For this end, we have created this small application called SoundBoard. Think of it as a diary/voice note app. You can talk freely about what you feel and it will be dictated and summarised for you automatically as well as measure your current emotional state. Your data is for you and you alone. If ever you feel you've come to an inflection point and would like to share your journey with a mental health professional, or anyone of your choosing, you can export everything you've said and it will be sent to your email. If ever you wish to delete your account, just say so and it will be done, and all your collected data will be deleted as well.</p>
+                    <p>We realise that ones emotional state, when polarised to a word (happy, sad, upset, angry), might not be accurate, hence when recording your emotional state, you'll have the choice to agree with the accessement, or disagree. This will help us calibrate measurements to more adequately measure how people, as well as yourself, feel.</p>
+                </div>
+                <div id="dAG" class="startsHidden" >
+                    <p>All your data is your own. The only cookies we save are for the "remember me" function to log in automatically. The data that is saved are voice recordings, their dictations, summarizations and the emotions extracted. At any moment you can have the data emailed to you or completely deleted with email, which ensures two factor authorisation."</p>
+                </div>    
+            </div>
+            <div id="signOrLogin" class="section" style="display: block;">
+                <a style="float:right;" onclick="signOrLogin(this)">SignUp</a>
+                <div id="SignUp"class="startsHidden" >
+                    <div id="inner" style="font-size:calc(30px + 1vw)">Signup</div>
+                    <div id="inner"><label for="email">Email:</label> </div>
+                    <div id="child" ><input type="email" id="semail" name="semail"> </div>
+                    <div id="inner" ><label for="pwd">Password:</label>  </div> 
+                        <div id="child" ><input type="password" class="pwd" name="spwd" minlength="8">
+                        <img src="images/show.png"  onclick="showPass('spwd', this)"> </div>
+                    <div id="inner"><label for="pwd">Confirm Password:</label></div>        
+                    
+                        <div id="child" ><input type="password" class="pwd" name="scpwd" minlength="8">
+                        <img src="images/show.png"  onclick="showPass('scpwd', this)"> </div>
+                 
+                    <div id="inner"> <button onmousedown ="submitSignUp()">SignUp</button></div>
+                
+                </div>
+        
+        
+                <div id="login">
+                    <div id="inner" style="font-size:calc(30px + 1vw)">Login</div>
+                    <div id="inner"><label for="email">Email:</label></div>
+                    <div id="child"><input type="email" id="email" name="lemail"></div>
+                    <div id="inner"><label for="pwd">Password:</label></div>
+                    
+                        <div id="child" ><input type="password" id="pwd" name="lpwd" minlength="8">
+                        <img src="images/show.png"  onclick="showPass('lpwd', this)"></div>
+                    
+                    <div id="inner"><button onmousedown ="submitLogIn()">LogIn and accept terms</button> 
+                        <a onclick="showTerms()">Click here to see terms</a></a></div>
+                    <div id="inner" style="font-size:calc(5px + 1vw)" onclick="forgotPassword()">Forgot Password</div>
+                </div>
+                <p id="errorBox"></p> 
+            </div>
+        </div>
+       <div id="terms" onclick="hideTerms()">
+        <h2><strong>Terms and Conditions</strong></h2>
+
+<p>Welcome to carriertech.uk!</p>
+
+<p>These terms and conditions outline the rules and regulations for the use of Carrier Technologies's Website, located at https://carriertech.uk.</p>
+
+<p>By accessing this website we assume you accept these terms and conditions. Do not continue to use carriertech.uk if you do not agree to take all of the terms and conditions stated on this page.</p>
+
+<p>The following terminology applies to these Terms and Conditions, Privacy Statement and Disclaimer Notice and all Agreements: "Client", "You" and "Your" refers to you, the person log on this website and compliant to the Company's terms and conditions. "The Company", "Ourselves", "We", "Our" and "Us", refers to our Company. "Party", "Parties", or "Us", refers to both the Client and ourselves. All terms refer to the offer, acceptance and consideration of payment necessary to undertake the process of our assistance to the Client in the most appropriate manner for the express purpose of meeting the Client's needs in respect of provision of the Company's stated services, in accordance with and subject to, prevailing law of gb. Any use of the above terminology or other words in the singular, plural, capitalization and/or he/she or they, are taken as interchangeable and therefore as referring to same.</p>
+
+<h3><strong>Cookies</strong></h3>
+
+<p>We employ the use of cookies. By accessing carriertech.uk, you agreed to use cookies in agreement with the Carrier Technologies's Privacy Policy. </p>
+
+<p>Most interactive websites use cookies to let us retrieve the user's details for each visit. Cookies are used by our website to enable the functionality of certain areas to make it easier for people visiting our website. Some of our affiliate/advertising partners may also use cookies.</p>
+
+<h3><strong>License</strong></h3>
+
+<p>Unless otherwise stated, Carrier Technologies and/or its licensors own the intellectual property rights for all material on carriertech.uk. All intellectual property rights are reserved. You may access this from carriertech.uk for your own personal use subjected to restrictions set in these terms and conditions.</p>
+
+<p>You must not:</p>
+<ul>
+    <li>Republish material from carriertech.uk</li>
+    <li>Sell, rent or sub-license material from carriertech.uk</li>
+    <li>Reproduce, duplicate or copy material from carriertech.uk</li>
+    <li>Redistribute content from carriertech.uk</li>
+</ul>
+
+<p>This Agreement shall begin on the date hereof. Our Terms and Conditions were created with the help of the <a href="https://www.termsandconditionsgenerator.com/">Free Terms and Conditions Generator</a>.</p>
+
+<p>Parts of this website offer an opportunity for users to post and exchange opinions and information in certain areas of the website. Carrier Technologies does not filter, edit, publish or review Comments prior to their presence on the website. Comments do not reflect the views and opinions of Carrier Technologies,its agents and/or affiliates. Comments reflect the views and opinions of the person who post their views and opinions. To the extent permitted by applicable laws, Carrier Technologies shall not be liable for the Comments or for any liability, damages or expenses caused and/or suffered as a result of any use of and/or posting of and/or appearance of the Comments on this website.</p>
+
+<p>Carrier Technologies reserves the right to monitor all Comments and to remove any Comments which can be considered inappropriate, offensive or causes breach of these Terms and Conditions.</p>
+
+<p>You warrant and represent that:</p>
+
+<ul>
+    <li>You are entitled to post the Comments on our website and have all necessary licenses and consents to do so;</li>
+    <li>The Comments do not invade any intellectual property right, including without limitation copyright, patent or trademark of any third party;</li>
+    <li>The Comments do not contain any defamatory, libelous, offensive, indecent or otherwise unlawful material which is an invasion of privacy</li>
+    <li>The Comments will not be used to solicit or promote business or custom or present commercial activities or unlawful activity.</li>
+</ul>
+
+<p>You hereby grant Carrier Technologies a non-exclusive license to use, reproduce, edit and authorize others to use, reproduce and edit any of your Comments in any and all forms, formats or media.</p>
+
+<h3><strong>Hyperlinking to our Content</strong></h3>
+
+<p>The following organizations may link to our Website without prior written approval:</p>
+
+<ul>
+    <li>Government agencies;</li>
+    <li>Search engines;</li>
+    <li>News organizations;</li>
+    <li>Online directory distributors may link to our Website in the same manner as they hyperlink to the Websites of other listed businesses; and</li>
+    <li>System wide Accredited Businesses except soliciting non-profit organizations, charity shopping malls, and charity fundraising groups which may not hyperlink to our Web site.</li>
+</ul>
+
+<p>These organizations may link to our home page, to publications or to other Website information so long as the link: (a) is not in any way deceptive; (b) does not falsely imply sponsorship, endorsement or approval of the linking party and its products and/or services; and (c) fits within the context of the linking party's site.</p>
+
+<p>We may consider and approve other link requests from the following types of organizations:</p>
+
+<ul>
+    <li>commonly-known consumer and/or business information sources;</li>
+    <li>dot.com community sites;</li>
+    <li>associations or other groups representing charities;</li>
+    <li>online directory distributors;</li>
+    <li>internet portals;</li>
+    <li>accounting, law and consulting firms; and</li>
+    <li>educational institutions and trade associations.</li>
+</ul>
+
+<p>We will approve link requests from these organizations if we decide that: (a) the link would not make us look unfavorably to ourselves or to our accredited businesses; (b) the organization does not have any negative records with us; (c) the benefit to us from the visibility of the hyperlink compensates the absence of Carrier Technologies; and (d) the link is in the context of general resource information.</p>
+
+<p>These organizations may link to our home page so long as the link: (a) is not in any way deceptive; (b) does not falsely imply sponsorship, endorsement or approval of the linking party and its products or services; and (c) fits within the context of the linking party's site.</p>
+
+<p>If you are one of the organizations listed in paragraph 2 above and are interested in linking to our website, you must inform us by sending an e-mail to Carrier Technologies. Please include your name, your organization name, contact information as well as the URL of your site, a list of any URLs from which you intend to link to our Website, and a list of the URLs on our site to which you would like to link. Wait 2-3 weeks for a response.</p>
+
+<p>Approved organizations may hyperlink to our Website as follows:</p>
+
+<ul>
+    <li>By use of our corporate name; or</li>
+    <li>By use of the uniform resource locator being linked to; or</li>
+    <li>By use of any other description of our Website being linked to that makes sense within the context and format of content on the linking party's site.</li>
+</ul>
+
+<p>No use of Carrier Technologies's logo or other artwork will be allowed for linking absent a trademark license agreement.</p>
+
+<h3><strong>iFrames</strong></h3>
+
+<p>Without prior approval and written permission, you may not create frames around our Webpages that alter in any way the visual presentation or appearance of our Website.</p>
+
+<h3><strong>Content Liability</strong></h3>
+
+<p>We shall not be hold responsible for any content that appears on your Website. You agree to protect and defend us against all claims that is rising on your Website. No link(s) should appear on any Website that may be interpreted as libelous, obscene or criminal, or which infringes, otherwise violates, or advocates the infringement or other violation of, any third party rights.</p>
+
+<h3><strong>Reservation of Rights</strong></h3>
+
+<p>We reserve the right to request that you remove all links or any particular link to our Website. You approve to immediately remove all links to our Website upon request. We also reserve the right to amen these terms and conditions and it's linking policy at any time. By continuously linking to our Website, you agree to be bound to and follow these linking terms and conditions.</p>
+
+<h3><strong>Removal of links from our website</strong></h3>
+
+<p>If you find any link on our Website that is offensive for any reason, you are free to contact and inform us any moment. We will consider requests to remove links but we are not obligated to or so or to respond to you directly.</p>
+
+<p>We do not ensure that the information on this website is correct, we do not warrant its completeness or accuracy; nor do we promise to ensure that the website remains available or that the material on the website is kept up to date.</p>
+
+<h3><strong>Disclaimer</strong></h3>
+
+<p>To the maximum extent permitted by applicable law, we exclude all representations, warranties and conditions relating to our website and the use of this website. Nothing in this disclaimer will:</p>
+
+<ul>
+    <li>limit or exclude our or your liability for death or personal injury;</li>
+    <li>limit or exclude our or your liability for fraud or fraudulent misrepresentation;</li>
+    <li>limit any of our or your liabilities in any way that is not permitted under applicable law; or</li>
+    <li>exclude any of our or your liabilities that may not be excluded under applicable law.</li>
+</ul>
+
+<p>The limitations and prohibitions of liability set in this Section and elsewhere in this disclaimer: (a) are subject to the preceding paragraph; and (b) govern all liabilities arising under the disclaimer, including liabilities arising in contract, in tort and for breach of statutory duty.</p>
+
+<p>As long as the website and the information and services on the website are provided free of charge, we will not be liable for any loss or damage of any nature.</p>
+       </div>
+    </body>
+    <script type="text/javascript" src="langlist.json"></script>
+    <script src="https://cdn.plot.ly/plotly-2.25.2.min.js" charset="utf-8"></script>    <script>
+        var socket = new WebSocket("wss://carriertech.uk:8008/");
+        const startRecordButton = document.getElementById("rec");
+        const signOrLogindiv = document.getElementById("signOrLogin");
+        var date = new Date();
+        var calDict ={};
+        var languagelist = JSON.parse(langlist)[0];
+        var isDown = false;
+        //window.onload= (event) => {
+        const languageChoice = document.getElementById("languageChoice");
+        const languages = document.getElementById("languages");
+        for (let key in languagelist){
+            let option = document.createElement("option");
+            option.setAttribute("value", key);
+            option.innerHTML=key;
+            option.addEventListener("click", function(){
+                                            languageChoice.value = option.value;
+                                            languageChoice.innerHTML = option.innerHTML;} )
+            languages.appendChild(option);
+
+        }
+        const login = document.getElementById("login");
+        const signup = document.getElementById("SignUp");
+        const calendar = document.getElementById("calendar");
+        const emotion = document.getElementById("emotion");
+        const categorise = document.getElementById("categorise");
+        const settings = document.getElementById("settings");
+        const useLLMVar = document.getElementById("useLLM");
+        const mainScreen = document.getElementById("mainScreen");
+        
+        const currentMonth = document.getElementById("currentMonth");
+        const rants = document.getElementById("rants");
+        const sections = document.getElementById("sections");
+        const catAnalysis = document.getElementById("catAnalysis");
+        const viewCatDiv = document.getElementById("viewCatDiv");
+        
+        var recording = false;
+        var oldblob = new Blob();
+        var latestKey = "";
+        var selectedDiv = false;
+        var sortingDiv = false;
+        var dataDict = {};
+        var prosodyData = [];
+        var eDict = {'neutral':{"colour": "#808080", "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'calm': {"colour": "#75945b", "colourRGB":[117,148,91], "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'happy': {"colour": "#fff761", "colourRGB":[255,247,97],"val":{"speechEmotion":1, "textEmotion":1}}, 
+            'sad' : {"colour": "#6e79ff", "colourRGB":[110,121,255],"val":{"speechEmotion":1, "textEmotion":1}}, 
+            'angry' : {"colour": "#ff4313","colourRGB":[255,67,19], "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'fear' : {"colour": "#ff8c2d","colourRGB":[255,140,45], "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'disgust' : {"colour": "#e564df","colourRGB":[229,100,223], "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'surprise' : {"colour": "#24c9ff","colourRGB":[36,201,255], "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'love' : {"colour": "#f3cec9","colourRGB":[243,206,201], "val":{"speechEmotion":1, "textEmotion":1}}};
+        
+        var eList = Object.keys(eDict);
+        var eList2 = [];
+        var oc = [255,255,255];
+        var nc = [155,176,209];
+        var bg = [155,176,209];
+        var animFrames = 200
+        var time = 0;
+        var userID = null;
+        var rantCounter = 0;
+        
+        languageChoice.addEventListener('focus', showLang);
+        languageChoice.addEventListener('blur', showLang);
+        function showLang(e){
+            if(e.type == "focus"){
+                languages.style.display = "block";
+            }else{
+                setTimeout(() => {languages.style.display = "none";}, 300);
+            }
+        }
+        function showTerms(){
+            document.getElementById("terms").style.display="block";
+        }
+        function hideTerms(){
+            document.getElementById("terms").style.display="none";
+        }
+        function forgotPassword(){
+            var toSend = new Object();
+            toSend.action = "forgotPassword"; 
+            toSend.email = document.getElementsByName("lemail")[0].value;
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);
+        }
+
+        function updateEmotions(jO){
+            jsonObj = jO["data"];
+            eList2 = [];
+            for (let i =0; i<eList.length;i++){
+                let e = eList[i];        
+                eDict[e]["val"]["textEmotion"]=jsonObj["textEmotion"][e];
+                eDict[e]["val"]["speechEmotion"]=jsonObj["speechEmotion"][e];
+               
+            }
+            
+            if (jsonObj.hasOwnProperty("prosodyData")){
+                eDict["prosodyData"]=jsonObj["prosodyData"];
+            }
+        }
+
+        function hideDiv(hDiv){
+            hDiv.style.display="none";
+            catData.innerHTML="";
+        }
+        function removeCat(div){
+            rantCounter = rants.childElementCount;
+            createRant(div.innerHTML.split("<button")[0], div.id);
+            dataDict["data"][div.id]["category"] = "None";
+            div.remove();
+            sortDiv(div, "None");
+
+
+        }
+        function submitSuggestion(){
+            var toSend = new Object();
+            toSend.action = "suggestion"; 
+            toSend.email = dataDict["email"];
+            toSend.suggestion = document.getElementById("suggestion").value;
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);
+            document.getElementById("submitSuggestion").innerHTML = "Submit <br> Thanks for your suggestions, and I am actually taking them onboard";
+
+        }
+        function changeLanguage(div){
+            var toSend = new Object();
+            toSend.action = "changeLanguage"; 
+            toSend.email = dataDict["email"];
+            toSend.language = languagelist[languageChoice.value];
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);
+            div.innerHTML = "Change <br>Changed to " + languageChoice.value;
+
+        }
+        function viewCat(viewDiv){
+            catAnalysis.parentNode.style.display = "block";
+            catAnalysis.parentNode.style.backgroundColor = viewDiv.style.backgroundColor;
+            catAnalysis.innerHTML = viewDiv.innerHTML;
+            let emoValues = {};
+            for (var d of eList){emoValues[d]=0;}
+            let yValues = []
+            for (var d of eList){yValues.push(0);}
+            var barColors = [];
+            let counter = 0;
+            for (var d of eList){barColors.push(eDict[d]["colour"]);}
+            for (let data in dataDict["data"]){
+                let currentCat = dataDict["data"][data]["category"];
+
+                
+                if (currentCat==catAnalysis.innerHTML){
+                    let d = document.createElement("div");
+                    d.id = data;
+                    d.innerHTML = dataDict["data"][data]["textBox"]+ "  <button onclick='removeCat(this.parentNode)'>remove</button>";
+                    catData.appendChild(d)
+                    for (let e = 0; e< eList.length; e++){
+
+                        if (!isNaN(dataDict["data"][data]["textEmotion"][eList[e]])){
+                            emoValues[eList[e]]+=dataDict["data"][data]["textEmotion"][eList[e]];
+                            yValues[e]+=dataDict["data"][data]["textEmotion"][eList[e]]
+                            counter+=1
+                        }
+                    }
+                    
+                }
+            } 
+
+            let ySum = yValues.reduce((pS, a)=> pS+a, 0);
+            let yVals = [];
+            let telist = [];
+            for (i=0; i < yValues.length; i++){
+             
+                let newInput = 
+                    {"pVal" : yValues[i] / ySum*100,
+                    "colour":barColors[i],
+                    "emotion": eList[i]};
+                yVals.push(newInput);
+            }
+            yVals.sort((a, b) => a.pVal - b.pVal);
+            for (i=0; i < yVals.length; i++){
+                yValues[i] = yVals[i].pVal;
+                barColors[i] = yVals[i].colour;
+                telist.push(yVals[i].emotion);
+            }
+            var data = [{
+                type: "pie",
+                values: yValues,
+                labels: telist,
+                textinfo: "label+percent",
+                marker: {colors:barColors},
+                insidetextorientation: "radial"
+                }]
+
+                var layout = [{
+                autosize: true
+                }]
+
+                Plotly.newPlot('textEmotionChart', data, layout)
+            /*var ctx = document.getElementById('textEmotionChart').getContext('2d');
+            new Chart(ctx,{
+                type:"bar",
+                data:{
+                    labels: eList,
+                    datasets:[{
+                        backgroundColor: barColors,
+                        data: yValues
+                    }]
+                },
+                options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Emotions from the Category"
+                }
+            }
+            });*/
+
+            
+        }
+       
+        function sortDiv(div, category){
+            var toSend = new Object();
+            toSend.action = "sort"; 
+            toSend.email = dataDict.email;
+            toSend.category = category;
+            toSend.rantID = div.id;
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);
+            if (category != "None"){div.remove();}
+            
+            dataDict["data"][div.id]["category"]= category;
+        }
+        socket.onclose = function(e){
+            console.log("error");
+            console.log(e);
+            var socket = new WebSocket("wss://carriertech.uk:8008/");
+        }
+        socket.onopen = function(e) {
+            console.log( "Connection established");
+            checkCookie();};
+        socket.onerror = function(e){
+            console.log(e);
+        }
+        socket.onmessage = function(event){
+        
+            var jsonObj = JSON.parse(event.data)
+            if(jsonObj["result"]=="build webage"){
+                document.cookie = "tempToken="+jsonObj["tempToken"];
+                getCookie("tempToken");
+                calendar.style.display = "block";
+                emotion.style.display = "block";
+                rants.style.display = "block";
+                calendar.style.display = "block";
+                categorise.style.display = "block";
+                settings.style.display = "block";
+                signOrLogindiv.style.display = "none";
+                mainScreen.scrollLeft =  (mainScreen.scrollWidth - mainScreen.clientWidth ) / 3;
+                userID = jsonObj["tempToken"];
+                calDict = genCalDict( jsonObj["data"]["data"]);
+                dataDict = jsonObj["data"];
+                let userAgentString =  navigator.userAgent; 
+                console.log(userAgentString)
+                dataDict["browser"] = userAgentString.indexOf("Safari") > -1 && userAgentString.indexOf("Chrome") == -1; 
+                console.log(dataDict);
+                
+                arrangeProsodyData(dataDict.data);
+                genCalScreen();
+                genWOLScreen()
+                if (dataDict.hasOwnProperty("language")){
+                    for (let key in languagelist){
+                        if (dataDict["language"] == languagelist[key]){
+                            languageChoice.value = key;
+                            break;
+                        }
+                    }
+                    
+                }else{
+                    languageChoice.value = "English (United Kingdom)";
+                }
+                
+                startListening();
+            }else if(jsonObj["result"]=="add text"){
+                latestKey = jsonObj.data.key;
+                updateEmotions(jsonObj);
+                buildGraph("textEmotion");
+                textBox.innerHTML+=jsonObj.data.textBox;
+                textBox.innerHTML+= jsonObj.data.llmresponse;
+                textBox.scrollTop = textBox.scrollHeight;
+                urlObj =  URL.createObjectURL(oldblob);
+                dataDict["data"][jsonObj["data"]["key"]] = jsonObj["data"];
+                document.getElementById("audioReturn").src = urlObj;
+                document.getElementById("audioControl").load();
+            }else if(jsonObj["result"] =="token expired"){
+                signOrLogin();
+            }else if(jsonObj["result"]=="emotionChanged"){
+                dataDict["data"][jsonObj["key"]]["textEmotion"][jsonObj["emotion"]] = 101;
+                updateEmotions(jsonObj);
+                buildGraph("textEmotion");
+
+
+            }else if(jsonObj["result"] =="sorted"){
+                console.log("sorted");
+            
+            
+            }else if(jsonObj["result"] == "deleted"){
+                document.body.innerHTML = jsonObj["message"];
+            }else{
+                document.getElementById("errorBox").innerHTML = jsonObj["result"];
+            }
+            
+        }
+        function arrangeProsodyData(d){
+            let x = [];
+            let y = [];
+            let z = [];
+            for (key in d){
+                
+                if (d[key].hasOwnProperty("prosodyData") && d[key]["prosodyData"]["F0semitoneFrom27.5Hz_sma3nz_amean"] != undefined){
+                        x.push(d[key].prosodyData["F0semitoneFrom27.5Hz_sma3nz_amean"]);
+                        y.push(d[key].prosodyData["loudness_sma3_amean"]);
+                        z.push(d[key].prosodyData["jitterLocal_sma3nz_amean"]);
+                    
+                        
+                    
+
+                    
+                }
+            }
+            let trace ={
+                x:x,
+                y:y,
+                z:z,
+                mode:"markers",
+                marker:{
+                    size:5,
+                    line:{
+                        color:'rgba(0,0,0, 0.1)',
+                        width: 0.5
+                    },
+                type:"scatter3D"
+                }
+            };
+            prosodyData.push(trace);
+        }
+        function showPass(id, cI) {
+        
+            var x = document.getElementsByName(id)[0];
+            if (x.type === "password") {
+                x.type = "text";
+                cI.src = "hide.png"
+            } else {
+                x.type = "password";
+                cI.src = "show.png"
+            }
+        }
+        function genCalDict(data){
+            for (var date in data){
+                let sDate = date.slice(date.indexOf("__")-5,date.indexOf("__")+6).replace("__","/").replace("_","/");
+                if (!(sDate in calDict)){
+                    calDict[sDate]={};
+                    for (var emo of eList){
+                        calDict[sDate][emo] = [];
+                    }
+                }else{
+                    if (data[date].hasOwnProperty("textEmotion") && date != "" && data[date]["textBox"] != "<br>sorry I didn't catch that<br>"){
+                        for (emo in data[date]["textEmotion"]){
+                            calDict[sDate][emo].push(data[date]["textEmotion"][emo]);
+                        }
+                    }
+                }
+            }
+            for (date in calDict){
+                topEmotion = "None";
+                topVal = 0;
+                for (emo in calDict[date]){
+                    let currentVal = 0;
+                    for(let i=0; i<calDict[date][emo].length; i++){currentVal+=calDict[date][emo][i];}
+                    currentVal = currentVal/calDict[date][emo].length
+                    if (currentVal>topVal){topEmotion=emo;}
+                }
+                calDict[date] = topEmotion;
+            }
+            return calDict;
+        }
+
+        function buildGraph(theDiv){
+
+                c = document.getElementById("canvas");
+                let size = Math.min(c.clientHeight, c.clientWidth);
+
+                let tM = 0;
+                let cE = "";
+                for (var key in eDict){
+                    if (key != "prosodyData" && eDict[key]["val"]["textEmotion"]>tM){
+                        nc = eDict[key]["colourRGB"]
+                        tM = eDict[key]["val"]["textEmotion"]
+                        cE = key;
+                    }            
+                }
+                let fColour =  nc.map(function (num, idx) {
+                    return parseInt(num + bg[idx]/2);
+                });
+                if (eDict.hasOwnProperty("prosodyData") && eDict["prosodyData"] != ""){
+                    let x = [eDict.prosodyData["F0semitoneFrom27.5Hz_sma3nz_amean"]];
+                    let y = [eDict.prosodyData["loudness_sma3_amean"]];
+                    let z = [eDict.prosodyData["jitterLocal_sma3nz_amean"]];
+                    let trace ={
+                        x:x,
+                        y:y,
+                        z:z,
+                        mode:"markers",
+                        marker:{
+                            size:5,
+                            line:{
+                                color:'rgb('+ parseInt(x) +', '+ parseInt(y*20)+', '+parseInt(z*100)+')',
+                                width: 0.5
+                            },
+                        type:"scatter3D"
+                        }
+                        
+                    };
+                    prosodyData.push(trace);
+                    let layout3d = {
+                        showlegend: false,
+                        //autosize:true,
+                        margin: {
+                            l: 0,
+                            r: 0,
+                            b: 0,
+                            t: 0
+                        },
+                        width : document.getElementById("prosodyEmotion").offsetWidth,
+                        height:document.getElementById("prosodyEmotion").offsetHeight
+                    };
+                    document.getElementById("prosodyEmotion").innerHTML="";
+                    Plotly.newPlot("prosodyEmotion", prosodyData, layout3d)
+                };
+
+
+                d = document.getElementById("textEmotion");
+                d.style.backgroundColor = "rgb("+nc[0]+", "+nc[1]+", "+nc[2]+")";
+                d.addEventListener("click", cancelPoint);
+                d.innerHTML = cE + "<br> Tap to change";
+                c.append(d);
+                animateColour(d, 0, fColour);
+        }
+        function changeEmotion(d){
+            document.getElementById("changeEmotion").style.display="none";
+            document.getElementById("bottomDiv").style.display="block";
+            document.getElementById("textBox").style.display="block";
+            var toSend = new Object();
+            toSend.action = "changeEmotion"; 
+            toSend.key = latestKey;
+            toSend.emotion = d.id;
+            toSend.tempToken = userID;
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);
+        }
+        function colourDistance(tColor, sColor, cStep){
+            let tempC = [0,0,0];
+            for (let i = 0; i<tempC.length; i++){
+                if (tColor[i]<sColor[i]){ 
+                        tempC[i] = tColor[i] + ((sColor[i]-tColor[i])/2/animFrames)*cStep;
+                    }else{
+                        tempC[i] = tColor[i] - ((tColor[i]-sColor[i])/2/animFrames)*cStep;
+                    }
+            }
+            cString = "rgb("+tempC[0]+", "+tempC[1]+", "+tempC[2]+")";
+            cArray = [tempC[0],tempC[1],tempC[2]];
+            return [cString, cArray];
+        }
+
+        function cancelPoint(e){
+            document.getElementById("bottomDiv").style.display="none";
+            document.getElementById("textBox").style.display="none";
+            document.getElementById("changeEmotion").style.display="block";
+            //e.target.style.backgroundColor ="white";
+            //e.target.innerHTML="";
+            document.body.style.backgroundColor ="rgb("+bg[0]+","+bg[1]+","+bg[2]+")";
+        }
+
+        function animateColour(div, atime, fColour){
+            cBG = colourDistance(bg, fColour, atime);
+            document.body.style.backgroundColor = cBG[0];
+            mainScreen.style.backgroundColor = cBG[0];
+            div.style.backgroundColor = colourDistance(nc,fColour, atime)[0];
+            atime +=1;
+            if(atime<animFrames){
+                    requestAnimationFrame( function(){ animateColour(div, atime, fColour); });          
+            }else{
+                bg = cBG[1];
+                div.innerHTML="";
+                div.style.backgroundColor="white";
+                oc = cArray;
+            }
+
+        }
+
+        function genWOLScreen(){
+            rantCounter = 0;
+            console.log(dataDict);
+            for(var key in dataDict.data){
+                console.log(key)
+                if (dataDict["data"][key]["textBox"] == "<br>sorry I didn't catch that<br>" || !dataDict["data"][key].hasOwnProperty("textBox")){
+                    delete dataDict["data"][key];
+                    continue;
+                }
+                //dataDict["data"][key] = dataDict["data"][key]
+                if (!dataDict["data"][key].hasOwnProperty("category") || dataDict["data"][key]["category"] == "None"){
+                    createRant(dataDict["data"][key]["textBox"], key)
+                    rantCounter+=1
+                    
+                }
+                
+                if(rantCounter>20){break;}
+            }
+        }
+        function sortRant(sD){
+            sortingDiv = sD;
+            sD.style.border =  "thick solid #0000FF";
+        }
+        function resetDiv(resetDiv){
+            resetDiv.style.border = "none";
+            sortingDiv=false;
+        }
+        function createRant(text, dateID){
+            let o = rants.getBoundingClientRect();
+            let d = document.createElement("div");
+            d.innerHTML = text;                   
+            rants.appendChild(d);
+            d.id = dateID;
+            d.style.width="80%";
+            d.style.height="50%";
+            d.style.fontSize = "2vh";
+            d.style.backgroundColor="#FFFAF0";
+            d.style.color="black";
+            d.style.zIndex = 1000;
+            d.style.overflow = "auto";
+            d.style.float = "right";
+            for (let child of sections.children){
+                let newChoice = child.cloneNode(true);
+                newChoice.style.display = "inline-block";
+                //newChoice.style.width = "30%";
+                newChoice.onclick = function(){sortDiv(d, newChoice.innerHTML)};
+                d.appendChild(newChoice);
+            }
+            
+                
+           
+        }
+
+  
+        function signOrLogin(x){
+            if (x.innerHTML=="LogIn"){
+                login.style.display = "block";
+                signup.style.display = "none";
+                x.innerHTML="SignUp";
+            }else{
+                login.style.display = "none";
+                signup.style.display = "block";
+                x.innerHTML="LogIn"
+            }
+        }
+        function genDay(num, date){
+            let sd =  new Date(date.getMonth()+1+"/"+num+"/"+date.getFullYear());
+            let dString = sd.toLocaleDateString()
+            let d = document.createElement("div");
+            d.setAttribute("class","day");
+            d.setAttribute("id",""+num);
+            if(num ==0){d.innerHTML="";}
+            else{
+                d.innerHTML=""+num;
+                if(dString in calDict  && calDict[dString] != "None"){
+                    let tc = eDict[calDict[dString]]["colourRGB"];
+                    d.setAttribute("style", "background-color:rgb("+tc[0]+","+tc[1]+","+tc[2]+");");
+                }
+            }
+            
+            return d
+            
+        }
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i <ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+        function checkCookie() {
+            let username = getCookie("tempToken");
+            
+            if (username != "") {
+                var toSend = new Object();
+                toSend.action = "tokenLogin"; 
+                toSend.tempToken = username;
+                var jsonToSend = JSON.stringify(toSend);
+                socket.send(jsonToSend);
+            } 
+        }
+        function submitLogIn(){
+            var email = document.getElementsByName("lemail")[0];
+            var lpwd = document.getElementsByName("lpwd")[0];
+            if(email.value && lpwd.value){
+                var toSend = new Object();
+                toSend.action = "LogIn"; 
+                toSend.email = email.value;
+                toSend.password = lpwd.value;
+                var jsonToSend = JSON.stringify(toSend);
+                socket.send(jsonToSend);
+            }
+        }
+        function submitSignUp(){
+            var email = document.getElementsByName("semail")[0];
+            var spwd = document.getElementsByName("spwd")[0];
+            var scpwd = document.getElementsByName("scpwd")[0];
+            
+            if(email.value && spwd.value && spwd.value == scpwd.value){
+                var toSend = new Object();
+                toSend.action = "SignUp"; 
+                toSend.email = email.value;
+                toSend.password = spwd.value;
+                var jsonToSend = JSON.stringify(toSend);
+                socket.send(jsonToSend);
+                
+            }else{
+                document.getElementById("errorBox").innerHTML = "passwords don't match :/";
+            }
+        }
+
+        async function startListening(){
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({audio:true});
+                recorder = new MediaRecorder(stream);
+            } catch (err) {
+                alert(err);
+            }
+        }
+        function signOut(){
+            var Cookies = document.cookie.split(';');
+            for (var i = 0; i < Cookies.length; i++) {
+            document.cookie = Cookies[i] + "=; expires="+ new Date(0).toUTCString();
+            }
+            location.reload();
+
+        }
+        function deleteAccount(deleteDiv){
+            var toSend = new Object();
+            toSend.action = "deleteAccount"; 
+            toSend.email = dataDict["email"];
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);  
+            deleteDiv.innerHTML="Please check your email to complete";         
+        } 
+        function showSettings(){
+            mainScreen.scrollLeft =  (mainScreen.scrollWidth - mainScreen.clientWidth );
+
+        }
+
+        function changeMonth(sm){
+            date.setMonth(date.getMonth() + sm);
+            genCalScreen();
+        }
+        function genCalScreen(){
+            currentMonth.innerHTML = date.toLocaleString("default",{month:"long"});
+            calGrid.innerHTML = "<div class='day'>Sun</div><div class='day'>Mon</div><div class='day'>Tues</div><div class='day'>Wed</div><div class='day'>Thurs</div> <div class='day'>Fri</div>  <div class='day'>Sat</div> ";
+            var totalMonthDay = new Date(date.getFullYear(),date.getMonth()+1,0).getDate();
+            var startWeekDay = new Date(date.getFullYear(),date.getMonth(),0).getDay();
+            for (let i = 0; i<startWeekDay+1; i++){calGrid.appendChild(genDay(0, date));}
+            for (let i=0; i<totalMonthDay; i++){ calGrid.appendChild(genDay(i+1, date));}
+        }
+        startRecordButton.addEventListener("click", async () => {
+            if(!recording){
+            recording=true;
+            startRecordButton.src="images/stoprec.png";
+            recorder.start();
+            recorder.addEventListener("dataavailable", async (event) => {
+                var chunks = []   
+                chunks.push(event.data);
+                var blob = new Blob(chunks, {type: "audio/webm" });
+                if (blob.size != oldblob.size){
+                    var toSend = new Object();
+                    toSend.userID = userID;
+                    toSend.browser = dataDict["browser"];
+                    toSend.date = date.toDateString();
+                    toSend.action = "processVoice";
+                    toSend.language = languagelist[languageChoice.value];
+                    if (useLLMVar.checked){toSend.LLM=true;}
+                    var jsonToSend = JSON.stringify(toSend);
+                    socket.send(jsonToSend);
+                    socket.send(blob);
+                    oldblob = blob;
+                }
+            });
+            }else{
+                recording=false;
+                startRecordButton.src="images/rec.png";
+                recorder.stop();
+            }
+        });
+    </script>
+</html>

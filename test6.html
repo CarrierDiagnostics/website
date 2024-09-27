@@ -1,0 +1,354 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<style>
+    body {
+      width:100vh;
+      height:100vh;
+      overflow:hidden;
+      margin: 1rem;
+    }
+    #login{
+        margin-top:30%;
+        margin-left:auto;
+        margin-right:auto;
+        margin-bottom:auto;
+        display:none;
+        width:30%;
+        heigth:50vh;
+        
+    }
+    #SignUp{
+        margin-top:30%;
+        margin-left:auto;
+        margin-right:auto;
+        margin-bottom:auto;
+        display:block;
+        width:30%;
+        heigth:50vh;
+        
+    }
+    #textBox{
+        display: none;
+        border: 2px solid black;
+        width: 50%;
+        height: 30%;
+        overflow:auto;
+        /*position: fixed; or absolute */
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom:auto;
+        margin-top:10%;
+
+    }
+    #buttonBox{
+        position:fixed;
+        bottom:0vh;
+        justify-content: space-around;
+        left:30%;
+        width:50%;
+        display: none;
+        }
+    #chartsContainer{
+        display: none;
+        width: 100%;
+        height:45%;
+        }
+    #speechEmotion,#textEmotion{
+        width:100%;
+        height:25%;
+        margin:5%;
+        display:block;
+    }
+    
+    button {
+        padding: 5%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 4px;
+    }
+    pre {
+      color: red;
+      white-space: pre-line;
+    }
+
+</style>
+
+  <body>
+    <button type="button" id="signOrLogin" onclick="signOrLogin()">LogIn</button>
+        
+    <div id="SignUp">
+        <p>Signup</p>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="semail"><br><br>
+      <label for="pwd">Password:</label>
+      <input type="password" id="pwd" name="spwd" minlength="8">
+      <input type="checkbox" onclick="showPass('spwd')">Show Password<br><br>
+      <label for="pwd">Confirm Password:</label>
+      <input type="password" id="pwd" name="scpwd" minlength="8">
+      <input type="checkbox" onclick="showPass('scpwd')">Show Password<br><br>
+      <button onmousedown ="submitSignUp()">SignUp</button>
+      <p id="errorBox"></p>
+    </div>
+
+
+    <div id="login">
+        <p>Login</p>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="lemail"><br><br>
+      <label for="pwd">Password:</label>
+      <input type="password" id="pwd" name="lpwd" minlength="8">
+      <input type="checkbox" onclick="showPass('lpwd')">Show Password<br><br>
+      <button onmousedown ="submitLogIn()">LogIn</button>
+    </div>
+   
+    <div id="textBox">
+        <br><br>
+    </div>
+    <div id="chartsContainer">
+        Speech Emotion Analysis
+        <div id="speechEmotion"></div>
+        Text Emotion Analysis
+        <div id="textEmotion"></div>
+    </div>
+    <div id="buttonBox">
+        <div>
+            <button id="startRecordButton" >Start recording</button>
+            <button id="stopRecordButton" >Stop recording</button>
+        </div>
+    </div>
+    
+
+  </body>
+
+
+<script>
+
+let stream;
+let recorder;
+var oldblob = new Blob();
+
+const startRecordButton = document.querySelector('#startRecordButton');
+const stopRecordButton = document.querySelector('#stopRecordButton');
+
+var socket = new WebSocket("wss://carriertech.uk:8008/");
+socket.onmessage = function(event){
+        var jsonObj = JSON.parse(event.data)
+        if(jsonObj["result"]=="build webage"){
+            let d = new Date();
+            d.setTime(d.getTime()+(1000*60*60*10)) //token good for 10 hours
+            document.cookie = "tempToken="+jsonObj["tempToken"]+";expires="+d.toUTCString();
+            getCookie("tempToken");
+            signIn.style.display = "none";
+            logIn.style.display = "none";
+            signOrLoginVar.style.display = "none";
+            textBox.style.display = "block";
+            buttonBox.style.display = "block";
+            chartsContainer.style.display = "block";
+            userID = jsonObj["tempToken"];
+            startListening();
+        }else if(jsonObj["result"]=="add text"){
+            updateEmotions(jsonObj);
+            buildGraph("speechEmotion");
+            buildGraph("textEmotion");
+            textBox.innerHTML+=jsonObj.textBox;
+        }else if(jsonObj["result"] =="token expired"){
+            signOrLogin();
+        }
+        
+      }
+function updateEmotions(jsonObj){
+    for (let i =0; i<eList.length;i++){
+        let e = eList[i];
+        eDict[e]["val"]["textEmotion"]=jsonObj["textEmotion"][e];
+        eDict[e]["val"]["speechEmotion"]=jsonObj["speechEmotion"][e];
+        }
+}
+
+function buildGraph(theDiv){
+    let pDiv = document.getElementById(theDiv);
+    pDiv.innerHTML="";
+	for (let i =0; i<eList.length;i++){
+		let c = eList[i];
+        if (!isNaN(eDict[c]["val"][theDiv])){
+            let iDiv = document.createElement("div");
+            iDiv.id=c;
+            iDiv.innerHTML = c;
+            iDiv.style.textAlign = "center";
+            iDiv.style.width=eDict[c]["val"][theDiv]*100+"%";
+            iDiv.style.height="90%";
+            iDiv.style.display="inline-block";
+            iDiv.style.backgroundColor= eDict[c]["colour"];
+            pDiv.appendChild(iDiv);
+        }
+	}
+}
+var signIn = document.getElementById("SignUp");
+var logIn = document.getElementById("login");
+var textBox = document.getElementById("textBox");
+var buttonBox = document.getElementById("buttonBox");
+var signOrLoginVar = document.getElementById("signOrLogin");
+var chartsContainer = document.getElementById("chartsContainer");
+socket.onopen = function(e) {
+    console.log( "Connection established");
+    checkCookie();};
+var userID = null;
+var eDict = {'neutral':{"colour": "#808080", "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'calm': {"colour": "#75945b", "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'happy': {"colour": "#fff761", "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'sad' : {"colour": "#6e79ff", "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'angry' : {"colour": "#ff4313", "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'fear' : {"colour": "#ff8c2d", "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'disgust' : {"colour": "#e564df", "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'surprise' : {"colour": "#24c9ff", "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'love' : {"colour": "#f3cec9", "val":{"speechEmotion":1, "textEmotion":1}}};
+var cList = [];
+var eValList = [];
+var eList = Object.keys(eDict);
+for (let i=0; i<eList.length;i++){
+    let c = eList[i];
+    cList.push(eDict[c]["colour"]);
+    eValList.push(eDict[c].val);
+}
+
+
+
+
+function submitLogIn(){
+    var email = document.getElementsByName("lemail")[0];
+    var lpwd = document.getElementsByName("lpwd")[0];
+    if(email.value && lpwd.value){
+        var toSend = new Object();
+        toSend.action = "LogIn"; 
+        toSend.email = email.value;
+        toSend.password = lpwd.value;
+        var jsonToSend = JSON.stringify(toSend);
+        socket.send(jsonToSend);
+    }
+}
+function submitSignUp(){
+    console.log("getting vars");
+    var email = document.getElementsByName("semail")[0];
+    var spwd = document.getElementsByName("spwd")[0];
+    var scpwd = document.getElementsByName("scpwd")[0];
+    
+    if(email.value && spwd.value && spwd.value == scpwd.value){
+        var toSend = new Object();
+        toSend.action = "SignUp"; 
+        toSend.email = email.value;
+        toSend.password = spwd.value;
+        var jsonToSend = JSON.stringify(toSend);
+        socket.send(jsonToSend);
+        
+    }else{
+        document.getElementById("errorBox").innerHTML = "passwords don't match :/";
+    }
+}
+
+
+      
+function signOrLogin(){
+    var x = document.getElementById("signOrLogin");
+    
+    if (x.innerHTML=="LogIn"){
+        signIn.style.display = "none";
+        logIn.style.display="block";
+        x.innerHTML="SignUp";
+    }else{
+        signIn.style.display = "block";
+        logIn.style.display="none";
+        x.innerHTML="LogIn"
+    }
+}
+function showPass(id) {
+  var x = document.getElementsByName(id)[0];
+  console.log(x)
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+async function startListening(){
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    recorder = new MediaRecorder(stream);
+    
+    stopRecordButton.disabled = false;
+    console.log("Your microphone audio is being recorded locally.");
+  } catch (err) {
+    alert(err);
+  }
+}
+
+
+
+startRecordButton.addEventListener("click", async () => {
+  
+  recorder.start();
+  startRecordButton.disabled= true;
+  recorder.addEventListener("dataavailable", async (event) => {
+    var chunks = []   
+    chunks.push(event.data);
+    var blob = new Blob(chunks, {type: "audio/webm" });
+    if (blob.size != oldblob.size){
+        var toSend = new Object();
+        toSend.userID = userID;
+        toSend.action = "processVoice";
+        var jsonToSend = JSON.stringify(toSend);
+        socket.send(jsonToSend);
+        socket.send(blob);
+        oldblob = blob;
+    }
+  });
+  
+  stopRecordButton.disabled = false;
+  console.log("Your microphone audio is being recorded locally.");
+});
+
+stopRecordButton.addEventListener("click", () => {
+  recorder.stop();
+  startRecordButton.disabled= false;
+  stopRecordButton.disabled = true;
+  console.log("Your microphone audio has been successfully recorded locally.");
+});
+
+var soundNotAllowed = function (error) {
+        h.innerHTML = "You must allow your microphone.";
+        console.log(error);
+    }
+    
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  console.log("cookies = " +decodedCookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+function checkCookie() {
+    let username = getCookie("tempToken");
+    
+    if (username != "") {
+        var toSend = new Object();
+        toSend.action = "tokenLogin"; 
+        toSend.tempToken = username;
+        var jsonToSend = JSON.stringify(toSend);
+        socket.send(jsonToSend);
+  } 
+}
+window.onload = (event) => {
+    console.log("page is fully loaded " +document.cookie);
+
+  
+};
+</script>
+</html>

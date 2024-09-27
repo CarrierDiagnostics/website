@@ -1,0 +1,66 @@
+<html>
+<body>
+    <div id="inner" ><label for="pwd">Password:</label>  </div> 
+    <div id="inner">
+        <div id="child" ><input type="password" id="pwd" name="spwd" minlength="8">
+        <img src="show.png"  onclick="showPass('spwd', this)"> </div>
+    </div>
+    <div id="inner"><label for="pwd">Confirm Password:</label></div>        
+    <div id="inner">
+        <div id="child" ><input type="password" id="spwd" name="scpwd" minlength="8">
+        <img src="show.png"  onclick="showPass('scpwd', this)"> </div>
+    </div>
+    <div id="inner"> <button onmousedown ="resetPassword()">SignUp</button></div>
+    <p id="errorBox"></p> 
+</body>
+<script>
+    var spwd = document.getElementById("pwd");
+    var scpwd = document.getElementById("spwd");
+    console.log(spwd + " " + scpwd);
+var socket = new WebSocket("wss://carriertech.uk:8008/");
+socket.onmessage = function(event){
+    var jsonObj = JSON.parse(event.data)
+    document.body.innerHTML = jsonObj["result"]
+    }
+    
+function resetPassword(){
+
+    var url= window.location.href;
+    var urlArray = url.split("?")[1];
+    var vArray = urlArray.split("&");
+
+    var toSend = new Object();
+    toSend.action = "resetPassword";
+    for (let i = 0; i<vArray.length; i++){
+        let tA = vArray[i].split("=");
+        toSend[tA[0]] = tA[1];
+    }
+    console.log(toSend);
+    console.log(spwd.value + " " + scpwd.value);
+
+    console.log(spwd.value + " " + spwd.value == scpwd.value);
+    if(spwd.value && spwd.value == scpwd.value){
+        toSend.password = spwd.value;
+        var jsonToSend = JSON.stringify(toSend);
+        socket.send(jsonToSend);
+    }else{
+        document.getElementById("errorBox").innerHTML = "passwords don't match :/";
+    }
+}
+    function showPass(id, cI) {
+
+        var x = document.getElementsByName(id)[0];
+        if (x.type === "password") {
+            x.type = "text";
+            cI.src = "hide.png"
+        } else {
+            x.type = "password";
+            cI.src = "show.png"
+        }
+    }
+    
+   
+
+
+</script>
+</html>

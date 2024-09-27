@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="HandheldFriendly" content="true" />
+<meta name="MobileOptimized" content="480" />
+<meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no" />
+
+<link href="https://fonts.googleapis.com/css?family=Baloo" rel="stylesheet">
+    <style>
+        html{font-family: 'Baloo', sans-serif; color: #ffffff;font-size:calc(12px + 1vw); }    
+        body { background-color: #9bb0d1; position: relative;width:99vw;height:99vh;overflow:hidden;}
+        #wIS{ padding:5%;position:fixed;left:5%;top:10vh;overflow:auto;display:none;width:80%; height:70vh;background-color: #9bb0d1; box-shadow: 0 0  25px grey; }
+        #dAG{padding:5%;position:fixed; left:5%; top:10vh;overflow:auto;display:none;width:80%; height:70vh; background-color: #9bb0d1; box-shadow: 0 0  25px grey;}
+        #instruct{padding:5%; position:fixed;left:5%; top:10vh;overflow:auto;display:none;width:80%; height:70vh;background-color: #9bb0d1;box-shadow: 0 0  25px grey;}
+        .instructimg{max-width:100%;height:auto;}
+        #loginnav{position:absolute;display: none;}
+        ul {list-style-type: none; margin: 0; padding: 0; width: max(150px, 35%);background-color: #f1f1f1;}
+
+        li a {display: block; color: #000;padding: 8px 16px; text-decoration: none; }
+
+        /* Change the link color on hover */
+        li a:hover {background-color: #555;color: white;}
+
+        #leftNav {left:0; top: 25%;height:50vh;position: fixed;writing-mode: vertical-rl;text-orientation: mixed;border-style: solid; }
+        #rightNav{right: 0px; top: 25%; height:50vh; position: fixed; writing-mode: tb-rl; text-orientation: mixed; border-style: solid;}
+        #upperNav{top:0px; position: absolute; width: 25vw;border-style: solid;left:25%; }
+        #nav{width: 100%; height: 100%; text-align: center; display: none; }
+        #mainScreen{ top:0; left:0;  position:absolute;  width:80%; height:80%; display: none; margin: 10vh 10vw;}
+        #emotionScreen{ margin:auto; display: block; width:80%; height:90%;  }
+        #calScreen{ color: black; margin:auto; display: none; width:80%; height:90%;}
+        #wolScreen{ margin:1rem auto; display: none; width:80%; height:90%; }
+        #settingsScreen{ position: absolute;top:5vh; left:5vw; margin:auto; padding:auto; display: none; width:80%;  height:90%;  background-color:rgb(255, 255, 255); color: #272727; }
+        #settingsInternal{
+            display:flex;
+            align-items: center; 
+            justify-content: center;
+        }
+       #langaugeDiv{
+           display: block;
+           list-style-type: in;
+       }
+       li{ 
+        padding:1rem; 
+        font-size: calc(8px + 1vw);
+        border-top: 0.1rem solid rgb(212, 212, 212);
+
+        }
+        #calGrid { margin: auto; display: grid;grid-template-columns: repeat(7, minmax(0, 1fr)); background-color: #ffffff; padding: 10px; overflow:hidden;height:80%;}
+        .day {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        padding: 10px;
+        font-size: 1em;
+        text-align: center;
+        display:flex;
+    }
+    #loginnav{ position:absolute; display: none; }
+    #SignUp{display:none; margin-left:5vw; position:block; width:50%;  height:50vh; }
+    #topnav {
+	  background-color: #333;
+	  overflow: hidden;
+      height:5vh;
+	}
+	
+    #topnav a {
+	  float: left;
+	  color: #f2f2f2;
+	  text-align: center;
+	  padding: 0.25vw 1vh;
+	  text-decoration: none;
+	  font-size: calc(12px + 1vw);
+	}
+	#topnav a:hover {
+	  background-color: #ddd;
+	  color: black;
+	}
+    #calNav{
+        width:100%;
+        margin:0 auto;
+        position: relative;
+    }
+    #lastMonth, #currentMonth, #nextMonth{
+        display: inline;
+        font-size: 3rem;
+        padding: 1rem;
+    }
+    #textBox{
+        background-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 0  25px white;
+        width: 90%;
+        height: 70%;
+        overflow:auto;
+        /*position: fixed; or absolute */
+        margin:0 3rem;
+
+    }
+    #canvas{
+        margin:0 3rem;
+        width: 90%;
+        height: 30%;
+    }
+    #buttonBox{
+        position:fixed;
+        bottom:0vh;
+        justify-content: space-around;
+        padding:auto;
+        width:70%;
+        height:10vh;
+        }
+        img{height:100%}
+    #sections div{
+        padding:0.5rem;
+        margin:0.5rem;
+        border-radius: 25px;
+    }
+    #inner{
+        position:inline;
+        height:3vh;
+        
+        }
+    #child{
+        display:flex;
+        height:3vh;
+
+        }
+    #viewCatDiv{
+            display: none;
+            width:80%;
+            height:100%;
+            position: absolute;
+            padding:0.5rem;
+            margin:0.5rem;
+            border-radius: 25px;
+
+
+        }
+    #catAnalysis{
+        width:90%;
+        height:10%;
+    }
+    #catData{
+        width:90%;
+        height:50vh;
+        overflow: hidden;
+    }
+    </style>
+    <body>
+        <div id="nav">
+            <div id="leftNav" onclick="changeScreen('calScreen')">Calendar</div>
+            <div id="rightNav" onclick="changeScreen('wolScreen')">Life Wheel</div>
+            <div id="upperNav" onclick="showSettings()">Settings</div>
+        </div>
+
+        <div id="logInScreen">
+            <div id="topnav">
+                <a class = "tnChild" id="signOrLogin" onclick="signOrLogin()">Signup</a>
+                <a class = "tnChild" href="javascript:instruct()">Instructions</a>
+                <a class = "tnChild" href="javascript:wIS()">About</a>
+                <a  class = "tnChild" href="javascript:dAG()">Data and GDPR</a>
+                
+            </div>
+            <div id="instruct">
+                <p>Record what you are thinking or feeling</p>
+                <img class="instructimg" src="instruct1.png">
+                <p>The AI will dicatate what you said and show the emotions it noticed</p>
+                <img class="instructimg" src="instruct2.png">
+                <p>If you don't agree with the emotion, you can tap it and it will be removed. The background colour should reflect how you are feeling.</p>
+                <img class="instructimg" src="instruct3.png">
+                <p>Repeat :)</p>
+            </div>
+            <div id="wIS">
+                <p>Culturally, the importance of mental health is finally getting the recognition it deserves. Sadly our methods of measuring and analysing ones mental health is still plagued with subjectivity<a hred="https://pubmed.ncbi.nlm.nih.gov/35994049/">[1]</a>. This project is an attempt of creating baseline measurements which are free from subjectivity. We aim to implement  prosody and contextual measurements of emotions, keeping in mind individuals gender, culture, age, etc...</p>
+                <p>For this end, we have created this small application called SoundBoard. Think of it as a diary/voice note app. You can talk freely about what you feel and it will be dictated and summarised for you automatically as well as measure your current emotional state. Your data is for you and you alone. If ever you feel you've come to an inflection point and would like to share your journey with a mental health professional, or anyone of your choosing, you can export everything you've said and it will be sent to your email. If ever you wish to delete your account, just say so and it will be done, and all your collected data will be deleted as well.</p>
+                <p>We realise that ones emotional state, when polarised to a word (happy, sad, upset, angry), might not be accurate, hence when recording your emotional state, you'll have the choice to agree with the accessement, or disagree. This will help us calibrate measurements to more adequately measure how people, as well as yourself, feel.</p>
+            </div>
+            <div id="dAG">
+                <p>All your data is your own. The only cookies we save are for the "remember me" function to log in automatically. The data that is saved are voice recordings, their dictations, summarizations and the emotions extracted. At any moment you can have the data emailed to you or completely deleted with email, which ensures two factor authorisation."</p>
+            </div>    
+            <div id="SignUp">
+                <p style="font-size: 40px;">Signup</p>
+                <div id="inner"><label for="email">Email:</label> </div>
+                <div id="inner"><input type="email" id="email" name="semail"> </div>
+                <div id="inner" ><label for="pwd">Password:</label>  </div> 
+                <div id="inner">
+                    <div id="child" ><input type="password" id="pwd" name="spwd" minlength="8">
+                    <img src="show.png"  onclick="showPass('spwd', this)"> </div>
+                </div>
+                <div id="inner"><label for="pwd">Confirm Password:</label></div>        
+                <div id="inner">
+                    <div id="child" ><input type="password" id="pwd" name="scpwd" minlength="8">
+                    <img src="show.png"  onclick="showPass('scpwd', this)"> </div>
+                </div>
+                <div id="inner"> <button onmousedown ="submitSignUp()">SignUp</button></div>
+               
+            </div>
+        
+        
+            <div id="login">
+                <p style="font-size: 40px;">Login</p>
+              <div id="inner"><label for="email">Email:</label></div>
+              <div id="inner"><input type="email" id="email" name="lemail"></div>
+              <div id="inner"><label for="pwd">Password:</label></div>
+              <div id="inner">
+                <div id="child" ><input type="password" id="pwd" name="lpwd" minlength="8">
+                <img src="show.png"  onclick="showPass('lpwd', this)"></div>
+              </div>
+              <div id="inner"><button onmousedown ="submitLogIn()">LogIn</button></div>
+              <a onclick="forgotPassword()">Forgot Password</a>
+            </div>
+            <p id="errorBox"></p> 
+
+        </div>
+        <div id="mainScreen">
+            <div id="emotionScreen">
+                <div id="textBox">
+                    <audio id="audioControl" controls ><source id='audioReturn' type = 'audio/webm'></audio>
+                </div>
+                <div id="canvas"></div>
+        
+                <div id="buttonBox" >  
+                        <img style="display:block; margin: auto;" id="rec" src="rec.png"> 
+                </div>
+            </div>
+            <div id="calScreen">
+                <div id="calNav">
+                    <div id="currentMonth">Month</div>
+                    <div style="text-align: right;">
+                        <div id="lastMonth" onclick="changeMonth(-1)"><</div>
+                        <div id="nextMonth" onclick="changeMonth(1)">></div>
+                    </div>
+                </div>
+                <div id="calGrid"></div>
+            </div>
+            <div id="wolScreen">
+                <div id="rants" style="float: left; height: 100%; width:50%;"></div>
+                <div id="sections" style="float: left; height: 100%; width:50%;">
+                    <div style="background-color:cyan;" onclick="viewCat(this)" ontouchend="sortRant(this)" onmouseover="sortRant(this)" onmouseout="resetDiv(this)">Physical Environment</div>
+                    <div style="background-color:#B8860B;" onclick="viewCat(this)" ontouchend="sortRant(this)" onmouseover="sortRant(this)" onmouseout="resetDiv(this)">Business/Career</div>
+                    <div style="background-color:#8FBC8F;" onclick="viewCat(this)" ontouchend="sortRant(this)" onmouseover="sortRant(this)" onmouseout="resetDiv(this)">Finances</div>
+                    <div style="background-color:#FF8C00;" onclick="viewCat(this)" ontouchend="sortRant(this)" onmouseover="sortRant(this)" onmouseout="resetDiv(this)">Health</div>
+                    <div style="background-color:#006400;" onclick="viewCat(this)" ontouchend="sortRant(this)" onmouseover="sortRant(this)" onmouseout="resetDiv(this)">Family and Friends</div>
+                    <div style="background-color:#8B0000;" onclick="viewCat(this)" ontouchend="sortRant(this)" onmouseover="sortRant(this)" onmouseout="resetDiv(this)">Romance</div>
+                    <div style="background-color:#8B008B;" onclick="viewCat(this)" ontouchend="sortRant(this)" onmouseover="sortRant(this)" onmouseout="resetDiv(this)">Personal Growth</div>
+                    <div style="background-color:#808000;" onclick="viewCat(this)" ontouchend="sortRant(this)" onmouseover="sortRant(this)" onmouseout="resetDiv(this)">Fun and Recreation</div>
+                </div>
+                <div id="viewCatDiv" onclick="hideDiv(this)">
+                    <div id="catAnalysis"></div>
+                    <canvas id="textEmotionChart" width="90%" height="30%"></canvas>
+                    <div id="catData"></div>
+                </div>
+            </div>
+            
+        </div>
+        <div id="settingsScreen">
+            <div id="settingsInternal">
+            <ul style="list-style-type: none;">Settings
+                <li>Language <div id="langaugeDiv">
+                    <input list="languages" id="languageChoice" value="English (United Kingdom)"><a onclick="changeLanguage()"> Change</a>
+                    <datalist id="languages">
+
+                    </datalist>
+                </div>    
+                </li>
+                <li onclick="signOut()">Sign Out</li>
+                <li onclick="deleteAccount(this)">Delete Account</li>
+            </ul>
+        </div>
+        </div>
+    </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script type="text/javascript" src="langlist.json"></script>
+    <script>
+        var languagelist = JSON.parse(langlist)[0];
+        var date = new Date();
+        var isDown = false;
+        var selectedDiv = false;
+        var sortingDiv = false;
+        var dataDict = {};
+        var calDict ={};
+        var eDict = {'neutral':{"colour": "#808080", "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'calm': {"colour": "#75945b", "colourRGB":[117,148,91], "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'happy': {"colour": "#fff761", "colourRGB":[255,247,97],"val":{"speechEmotion":1, "textEmotion":1}}, 
+            'sad' : {"colour": "#6e79ff", "colourRGB":[110,121,255],"val":{"speechEmotion":1, "textEmotion":1}}, 
+            'angry' : {"colour": "#ff4313","colourRGB":[255,67,19], "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'fear' : {"colour": "#ff8c2d","colourRGB":[255,140,45], "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'disgust' : {"colour": "#e564df","colourRGB":[229,100,223], "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'surprise' : {"colour": "#24c9ff","colourRGB":[36,201,255], "val":{"speechEmotion":1, "textEmotion":1}}, 
+            'love' : {"colour": "#f3cec9","colourRGB":[243,206,201], "val":{"speechEmotion":1, "textEmotion":1}}};
+        const currentMonth = document.getElementById("currentMonth");
+        const catAnalysis = document.getElementById("catAnalysis");
+        const catData = document.getElementById("catData");
+        const languageListLi = document.getElementById("languages");
+        const languageChoice = document.getElementById("languageChoice");
+        const leftNav = document.getElementById("leftNav");
+        const rightNav = document.getElementById("rightNav");
+        const upperNav = document.getElementById("upperNav");
+        const nav = document.getElementById("nav");
+        const calGrid = document.getElementById("calGrid");
+        const wolScreen = document.getElementById("wolScreen");
+        const settingsScreen = document.getElementById("settingsScreen");
+        const logInScreen = document.getElementById("logInScreen");
+        const navArray = ["calScreen", "emotionScreen","wolScreen"];
+        const wol = ["Physical Environment", "Business/Career", "Finances", "Health", "Family and Friends", "Romance", "Personal Growth", "Fun and Recreation"];
+        const startRecordButton = document.getElementById("rec");
+        const wISdiv = document.getElementById("wIS");
+        const dAGdiv = document.getElementById("dAG");
+        const instructdiv = document.getElementById("instruct");
+        const signIn = document.getElementById("SignUp");
+        const logIn = document.getElementById("login");
+        const tOSA = [wISdiv, signIn, logIn, textBox, buttonBox];
+        const rants = document.getElementById("rants");
+        var points = new Object();
+        var recording = false;
+        var socket = new WebSocket("wss://carriertech.uk:8008/");
+        let stream;
+        let recorder;
+        var oldblob = new Blob();
+        var cList = [];
+        var eValList = [];
+        var eList = Object.keys(eDict);
+        var eList2 = [];
+        var oc = [255,255,255];
+        var nc = [155,176,209];
+        var bg = [155,176,209];
+        animFrames = 200
+        var time = 0;
+        var userID = null;
+        var rantCounter = 0;
+
+        window.onload = (event) => {
+            for (var key in languagelist){
+                var no = document.createElement("option");
+                no.value = key;
+                languageListLi.append(no);
+            }
+        };
+        function cancelPoint(e){
+            e.target.remove();
+            document.body.style.backgroundColor ="rgb("+bg[0]+","+bg[1]+","+bg[2]+")";
+        }
+        function sortDiv(div, category){
+            var toSend = new Object();
+            toSend.action = "sort"; 
+            toSend.email = dataDict.email;
+            toSend.category = category;
+            toSend.rantID = div.id;
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);
+            if (category != "None"){div.remove();}
+            
+            dataDict["data"][div.id]["category"]= category;
+        }
+        document.addEventListener('mouseup' , rantUp, true);
+        document.addEventListener('touchend' , rantUp, true);
+
+        function rantUp(e){
+            if (!selectedDiv){return;}
+            if (sortingDiv){
+                sortDiv(selectedDiv, sortingDiv.innerHTML)               
+            }
+            selectedDiv.style.backgroundColor="#FFFAF0";
+            isDown = false;
+            selectedDiv=null;
+        }
+
+
+        document.addEventListener('mousemove', rantMove, true);
+        document.addEventListener('touchmove', rantMoveTouch, true);
+        function rantMove(e){
+            console.log("rantMove x = " + e.clientX + " y = " + e.clientY + " SelectedIv = " + selectedDiv.innerHTML + " isdown = " + isDown );
+            //e.preventDefault();
+            if (isDown) {
+                offset = [
+                    selectedDiv.offsetLeft - e.clientX,
+                    selectedDiv.offsetTop - e.clientY
+                ];
+                let x = e.clientX;
+                let y = e.clientY;
+                selectedDiv.style.left = x + 'px';
+                selectedDiv.style.top  = y + 'px';
+            }
+        }
+        function rantMoveTouch(e){
+            console.log("rantMove x = " + e.touches[0].clientX + " y = " + e.touches[0].clientY + " SelectedIv = " + selectedDiv.innerHTML + " isdown = " + isDown );
+            //e.preventDefault();
+            if (isDown) {
+                offset = [
+                    selectedDiv.offsetLeft - e.touches[0].clientX,
+                    selectedDiv.offsetTop - e.touches[0].clientY
+                ];
+                let x = e.touches[0].clientX;
+                let y = e.touches[0].clientY;
+                selectedDiv.style.left = x + 'px';
+                selectedDiv.style.top  = y + 'px';
+            }
+        }
+        function updateEmotions(jO){
+            jsonObj = jO["data"];
+            console.log(jsonObj);
+            eList2 = [];
+            for (let i =0; i<eList.length;i++){
+                let e = eList[i];        
+                eDict[e]["val"]["textEmotion"]=jsonObj["textEmotion"][e];
+                eDict[e]["val"]["speechEmotion"]=jsonObj["speechEmotion"][e];
+            }
+            console.log(eList2);
+        }
+        function buildGraph(theDiv){
+
+            c = document.getElementById("canvas");
+            let size = Math.min(c.clientHeight, c.clientWidth);
+
+            let tM = 0;
+            let cE = "";
+            for (var key in eDict){
+                if (eDict[key]["val"]["textEmotion"]>tM){
+                    nc = eDict[key]["colourRGB"]
+                    tM = eDict[key]["val"]["textEmotion"]
+                    cE = key;
+                }      
+                
+            }
+            let fColour =  nc.map(function (num, idx) {
+            return parseInt(num + bg[idx]/2);
+            });
+            const d = document.createElement("div");
+            d.setAttribute("id", "emotionDiv");
+            d.style.position = "absolute";
+            
+            d.style.width =size+"px";
+            d.style.height = size+"px";
+            console.log(size + "px");
+            d.style.borderRadius = "50%";
+            //d.style.border="solid";
+            d.style.backgroundColor = "rgb("+nc[0]+", "+nc[1]+", "+nc[2]+")";
+            d.style.textAlign = "center";
+            d.style.verticalAlign = "middle";
+            d.innerHTML = cE;
+            d.style.zIndex = "100000";
+            
+            d.addEventListener("click", cancelPoint);
+            console.log(d);
+            c.append(d);
+            animateColour(d, 0, fColour);
+
+            
+            
+        }
+        
+        function forgotPassword(){
+            var toSend = new Object();
+            toSend.action = "forgotPassword"; 
+            console.log(document.getElementsByName("lemail")[0].value);
+            toSend.email = document.getElementsByName("lemail")[0].value;
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);
+        }
+        function toC(oriC, tarC, time){
+            let tempC = [0,0,0];
+            for (let i = 0; i<tarC.length; i++){
+
+                if (oriC[i]<tarC[i]){ 
+                    tempC[i] = oriC[i] + ((tarC[i]-oriC[i])/2/animFrames)*time;
+                }else{
+                    tempC[i] = oriC[i] - ((oriC[i]-tarC[i])/2/animFrames)*time;
+                }
+            }
+            return ["rgba("+tempC[0]+", "+tempC[1]+", "+tempC[2]+",1)",[tempC[0],tempC[1],tempC[2]]];
+        }
+
+        function colourDistance(tColor, sColor, cStep){
+            let tempC = [0,0,0];
+            for (let i = 0; i<tempC.length; i++){
+                console.log(tColor + " " + sColor);
+                if (tColor[i]<sColor[i]){ 
+                        tempC[i] = tColor[i] + ((sColor[i]-tColor[i])/2/animFrames)*cStep;
+                    }else{
+                        tempC[i] = tColor[i] - ((tColor[i]-sColor[i])/2/animFrames)*cStep;
+                    }
+            }
+            cString = "rgb("+tempC[0]+", "+tempC[1]+", "+tempC[2]+")";
+            cArray = [tempC[0],tempC[1],tempC[2]];
+            return [cString, cArray];
+        }
+
+        function animateColour(div, atime, fColour){
+            console.log(bg + " "+fColour+" "+nc);
+            cBG = colourDistance(bg, fColour, atime);
+            document.body.style.backgroundColor = cBG[0];
+
+            div.style.backgroundColor = colourDistance(nc,fColour, atime)[0];
+            atime +=1;
+            if(atime<animFrames){
+                    requestAnimationFrame( function(){ animateColour(div, atime, fColour); });          
+            }else{
+                bg = cBG[1];
+                div.remove();
+                oc = cArray;
+            }
+
+        }
+        function hideDiv(hDiv){
+            hDiv.style.display="none";
+            catData.innerHTML="";
+        }
+        
+        function removeCat(div){
+            rantCounter = rants.childElementCount;
+            console.log(rantCounter);
+            createRant(div.innerHTML.split("<button")[0], div.id);
+            dataDict["data"][div.id]["category"] = "None";
+            div.remove();
+            sortDiv(div, "None");
+
+
+        }
+        function viewCat(viewDiv){
+            catAnalysis.parentNode.style.display = "block";
+            catAnalysis.parentNode.style.backgroundColor = viewDiv.style.backgroundColor;
+            catAnalysis.innerHTML = viewDiv.innerHTML;
+            let emoValues = {};
+            for (var d of eList){emoValues[d]=0;}
+            let yValues = []
+            for (var d of eList){yValues.push(0);}
+            var barColors = [];
+            let counter = 0;
+            for (var d of eList){barColors.push(eDict[d]["colour"]);}
+            for (let data in dataDict["data"]){
+                let currentCat = dataDict["data"][data]["category"];
+                console.log(data + " cat = " +currentCat + " is equal " +catAnalysis.innerHTML.toLowerCase());
+                console.log(currentCat==catAnalysis.innerHTML.toLowerCase());
+                
+                if (currentCat==catAnalysis.innerHTML){
+                    let d = document.createElement("div");
+                    d.id = data;
+                    d.innerHTML = dataDict["data"][data]["textBox"]+ "  <button onclick='removeCat(this.parentNode)'>remove</button>";
+                    console.log(d);
+                    catData.appendChild(d)
+                    for (let e = 0; e< eList.length; e++){
+
+                        if (!isNaN(dataDict["data"][data]["textEmotion"][eList[e]])){
+                            emoValues[eList[e]]+=dataDict["data"][data]["textEmotion"][eList[e]];
+                            yValues[e]+=dataDict["data"][data]["textEmotion"][eList[e]]
+                            counter+=1
+                        }
+                    }
+                    
+                }
+            }
+            /*counter=counter/eList.length;
+            console.log(counter);
+            for (var t of eList){
+                d = document.createElement("div");
+                d.style.position = "relative";
+                //d.style.display = "flex";
+                d.style.width="10%";
+                d.style.height="10vh";
+                d.style.float="left";
+                d.style.backgroundColor = "white";
+                d.innerHTML = t;
+                sd = document.createElement("div");
+                sd.style.height=parseInt(emoValues[t]/counter*10)+"vh";
+                sd.style.width="100%";
+                sd.style.position = "absolute";
+                sd.style.bottom = "0px";
+                sd.style.backgroundColor = eDict[t]["colour"];
+                d.appendChild(sd);
+                catAnalysis.appendChild(d);
+                
+            }*/
+            var ctx = document.getElementById('textEmotionChart').getContext('2d');
+            new Chart(ctx,{
+                type:"bar",
+                data:{
+                    labels: eList,
+                    datasets:[{
+                        backgroundColor: barColors,
+                        data: yValues
+                    }]
+                },
+                options: {
+                legend: {display: false},
+                title: {
+                display: true,
+                text: "Emotions from the Category"
+                }
+            }
+            });
+
+            
+            
+             
+        }
+        function sortRant(sD){
+            sortingDiv = sD;
+            sD.style.border =  "thick solid #0000FF";
+        }
+        function resetDiv(resetDiv){
+            resetDiv.style.border = "none";
+            sortingDiv=false;
+        }
+
+
+        function changeMonth(sm){
+            date.setMonth(date.getMonth() + sm);
+            genCalScreen();
+        }
+        function genCalScreen(){
+            currentMonth.innerHTML = date.toLocaleString("default",{month:"long"});
+            calGrid.innerHTML = "<div class='day'>Sun</div><div class='day'>Mon</div><div class='day'>Tues</div><div class='day'>Wed</div><div class='day'>Thurs</div> <div class='day'>Fri</div>  <div class='day'>Sat</div> ";
+            var totalMonthDay = new Date(date.getFullYear(),date.getMonth()+1,0).getDate();
+            var startWeekDay = new Date(date.getFullYear(),date.getMonth(),0).getDay();
+            for (let i = 0; i<startWeekDay+1; i++){calGrid.appendChild(genDay(0, date));}
+            for (let i=0; i<totalMonthDay; i++){ calGrid.appendChild(genDay(i+1, date));}
+        }
+        function hideShowTopnav(){
+    
+            let tnEA = document.getElementsByClassName("tnChild");
+            hideTN = !hideTN;
+
+            if (hideTN){
+                tN.style.backgroundColor = "#9bb0d1";
+                for (let a of tnEA){a.style.display = "none";}
+            }else{
+                tN.style.backgroundColor = "#333";
+                for (let a of tnEA){a.style.display = "inline";}
+            
+            }
+        }
+        function genDay(num, date){
+            let sd =  new Date(date.getMonth()+1+"/"+num+"/"+date.getFullYear());
+            let dString = sd.toLocaleDateString()
+            let d = document.createElement("div");
+            d.setAttribute("class","day");
+            d.setAttribute("id",""+num);
+            if(num ==0){d.innerHTML="";}
+            else{
+                d.innerHTML=""+num;
+                console.log(dString);
+                console.log(calDict);
+                if(dString in calDict  && calDict[dString] != "None"){
+                    let tc = eDict[calDict[dString]]["colourRGB"];
+                    d.setAttribute("style", "background-color:rgb("+tc[0]+","+tc[1]+","+tc[2]+");");
+                }
+            }
+            
+            return d
+            
+        }
+        function changeLanguage(){
+            var toSend = new Object();
+            toSend.action = "changeLanguage"; 
+            toSend.email = dataDict["email"];
+            toSend.language = languagelist[languageChoice.value];
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);
+        }
+        function genWOLScreen(){
+            if (rants.hasChildNodes()){return;}
+            var toSend = new Object();
+            toSend.action = "categorise"; 
+            toSend.email = dataDict.email;
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);
+            console.log(jsonToSend);
+            
+        }
+
+
+        function genEmotionScreen(){
+
+        }
+       
+        function genScreen(s){
+            if (s =="calScreen"){genCalScreen();
+            }else if(s == "emotionScreen"){genEmotionScreen();
+            }else if(s=="wolScreen"){genWOLScreen()}
+        }
+        function showSettings(){
+            if (settingsScreen.style.display =="block"){
+                settingsScreen.style.display="none";
+            }else{settingsScreen.style.display="block"}
+        }
+        function changeScreen(screenID){
+            let c = true;
+            for (let s of navArray){
+                ss = document.getElementById(s);
+                if (s == screenID){
+                    ss.style.display="block";
+                    genScreen(s);
+
+                }else{
+                    ss.style.display="none";
+                    if (c){
+                        leftNav.setAttribute("onclick",'changeScreen("'+s+'")');
+                        leftNav.innerHTML = s;
+                        c=false;
+                        }else{
+                            rightNav.setAttribute("onclick",'changeScreen("'+s+'")');
+                            rightNav.innerHTML=s;
+                        }
+                }
+            }
+        }
+
+        function submitLogIn(){
+            var email = document.getElementsByName("lemail")[0];
+            var lpwd = document.getElementsByName("lpwd")[0];
+            if(email.value && lpwd.value){
+                var toSend = new Object();
+                toSend.action = "LogIn"; 
+                toSend.email = email.value;
+                toSend.password = lpwd.value;
+                var jsonToSend = JSON.stringify(toSend);
+                socket.send(jsonToSend);
+                console.log(jsonToSend);
+            }
+        }
+        function submitSignUp(){
+            console.log("getting vars");
+            var email = document.getElementsByName("semail")[0];
+            var spwd = document.getElementsByName("spwd")[0];
+            var scpwd = document.getElementsByName("scpwd")[0];
+            
+            if(email.value && spwd.value && spwd.value == scpwd.value){
+                var toSend = new Object();
+                toSend.action = "SignUp"; 
+                toSend.email = email.value;
+                toSend.password = spwd.value;
+                var jsonToSend = JSON.stringify(toSend);
+                socket.send(jsonToSend);
+                
+            }else{
+                document.getElementById("errorBox").innerHTML = "passwords don't match :/";
+            }
+        }
+        function deleteAccount(deleteDiv){
+            var toSend = new Object();
+            toSend.action = "deleteAccount"; 
+            toSend.email = dataDict["email"];
+            var jsonToSend = JSON.stringify(toSend);
+            socket.send(jsonToSend);  
+            deleteDiv.innerHTML="Please check your email to complete";         
+        } 
+        function signOrLogin(){
+            var x = document.getElementById("signOrLogin");
+            
+            if (x.innerHTML=="LogIn"){
+                tOS([logIn]);
+                x.innerHTML="SignUp";
+            }else{
+                tOS([signIn]);
+                x.innerHTML="LogIn"
+            }
+        }
+        function showPass(id, cI) {
+        
+        var x = document.getElementsByName(id)[0];
+        if (x.type === "password") {
+            x.type = "text";
+            cI.src = "hide.png"
+        } else {
+            x.type = "password";
+            cI.src = "show.png"
+        }
+        }
+        function tOS(sT){
+            console.log(sT);
+            errorBox.innerHTML="";
+            for (let i = 0; i<tOSA.length; i++){
+                if (sT.indexOf(tOSA[i]) >= 0) {
+                    tOSA[i].style.display = "block";
+                }else{
+                    tOSA[i].style.display = "none";
+                }
+            }
+        }
+        function wIS(){
+            wISdiv.style.display="block";
+            wISdiv.style.zIndex="1";
+        }
+        wISdiv.addEventListener("click",    function (){
+            wISdiv.style.display = "none";
+            wISdiv.style.zIndex="-99";
+            
+        });
+
+        function dAG(){
+            dAGdiv.style.display="block";
+            dAGdiv.style.zIndex="1";
+        }
+        dAGdiv.addEventListener("click",    function (){
+            dAGdiv.style.display = "none";
+            dAGdiv.style.zIndex="-99";
+            
+        });
+        function instruct(){
+            instructdiv.style.display="block";
+            instructdiv.style.zIndex="1";
+        }
+        instructdiv.addEventListener("click",    function (){
+            instructdiv.style.display = "none";
+            instructdiv.style.zIndex="-99";
+            
+        });
+        function getCookie(cname) {
+            let name = cname + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            console.log("cookies = " +decodedCookie);
+            let ca = decodedCookie.split(';');
+            for(let i = 0; i <ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+        async function startListening(){
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({audio:true});
+                recorder = new MediaRecorder(stream);
+                console.log("Your microphone audio is being recorded locally.");
+            } catch (err) {
+                alert(err);
+            }
+        }
+
+        function checkCookie() {
+            let username = getCookie("tempToken");
+            
+            if (username != "") {
+                var toSend = new Object();
+                toSend.action = "tokenLogin"; 
+                toSend.tempToken = username;
+                var jsonToSend = JSON.stringify(toSend);
+                socket.send(jsonToSend);
+            } 
+        }
+
+        function genCalDict(data){
+            for (var date in data){
+                let sDate = date.slice(date.indexOf("__")-5,date.indexOf("__")+6).replace("__","/").replace("_","/");
+                if (!(sDate in calDict)){
+                    calDict[sDate]={};
+                    for (var emo of eList){
+                        calDict[sDate][emo] = [];
+                    }
+                }else{
+                    if (data[date].hasOwnProperty("textEmotion") && date != "" && data[date]["textBox"] != "<br>sorry I didn't catch that<br>"){
+                        for (emo in data[date]["textEmotion"]){
+                            calDict[sDate][emo].push(data[date]["textEmotion"][emo]);
+                        }
+                    }
+                }
+            }
+            for (date in calDict){
+                topEmotion = "None";
+                topVal = 0;
+                for (emo in calDict[date]){
+                    let currentVal = 0;
+                    for(let i=0; i<calDict[date][emo].length; i++){currentVal+=calDict[date][emo][i];}
+                    currentVal = currentVal/calDict[date][emo].length
+                    if (currentVal>topVal){topEmotion=emo;}
+                }
+                calDict[date] = topEmotion;
+            }
+            console.log(calDict);
+            return calDict;
+        }
+
+        function createRant(text, dateID){
+            let o = rants.getBoundingClientRect();
+            let d = document.createElement("div");
+            d.innerHTML = text;                   
+            rants.appendChild(d);
+            d.id = dateID;
+            d.style.position = "absolute";
+            d.style.width="25%";
+            d.style.height="25%";
+            d.style.fontSize = "2vh";
+            d.style.overflow = "hidden";
+            d.style.backgroundColor="#FFFAF0";
+            d.style.left = (rants.childElementCount*5)+"px";
+            d.style.top = (rants.childElementCount*5)+"px";
+            d.style.color="black";
+            d.style.zIndex = rants.childElementCount;
+            d.addEventListener("touchstart", moveRant, false);
+            d.addEventListener("mousedown", moveRant, false);
+                
+           
+        }
+
+        function moveRant(e){
+            console.log(e);
+            isDown = true;
+            selectedDiv = e.target;
+            e.target.style.backgroundColor="#E5E1D8";
+        }
+        function signOut(){
+            document.cookie ="";
+            location.reload();
+
+        }
+        socket.onopen = function(e) {
+            console.log( "Connection established");
+            checkCookie();};
+            
+
+        socket.onmessage = function(event){
+        
+            var jsonObj = JSON.parse(event.data)
+            if(jsonObj["result"]=="build webage"){
+                console.log(jsonObj);
+                document.cookie = "tempToken="+jsonObj["tempToken"];
+                getCookie("tempToken");
+                logInScreen.style.display = "none";
+                nav.style.display="block";
+                mainScreen.style.display = "block";
+                userID = jsonObj["tempToken"];
+                calDict = genCalDict( jsonObj["data"]["data"]);
+                dataDict = jsonObj["data"];
+                console.log(dataDict);
+                if (dataDict.hasOwnProperty("language")){
+                    for (let key in languagelist){
+                        if (dataDict["language"] == languagelist[key]){
+                            languageChoice.value = key;
+                            break;
+                        }
+                    }
+                    
+                }else{
+                    languageChoice.value = "English (United Kingdom)";
+                }
+                
+                startListening();
+            }else if(jsonObj["result"]=="add text"){
+                updateEmotions(jsonObj);
+                //buildGraph("speechEmotion");
+                buildGraph("textEmotion");
+                textBox.innerHTML+=jsonObj.data.textBox;
+                urlObj =  URL.createObjectURL(oldblob);
+                dataDict["data"][jsonObj["data"]["key"]] = jsonObj["data"];
+                document.getElementById("audioReturn").src = urlObj;
+                document.getElementById("audioControl").load();
+            }else if(jsonObj["result"] =="token expired"){
+                signOrLogin();
+            }else if(jsonObj["result"] =="sorted"){
+                console.log("sorted");
+            
+            }else if(jsonObj["result"]=="categorise"){
+                rantCounter = 0;
+                console.log(jsonObj.data);
+                
+                for(var key in jsonObj.data){
+                    console.log(key);
+                    console.log(jsonObj["data"][key]);
+                    if (jsonObj["data"][key]["textBox"] == "<br>sorry I didn't catch that<br>" || !jsonObj["data"][key].hasOwnProperty("textBox")){
+                        delete jsonObj["data"][key];
+                        continue;
+                    }
+                    dataDict["data"][key] = jsonObj["data"][key]
+                    if (!jsonObj["data"][key].hasOwnProperty("category") || jsonObj["data"][key]["category"] == "None"){
+                        
+                        createRant(jsonObj["data"][key]["textBox"], key)
+                        rantCounter+=1
+                        
+                    }
+                    
+                    if(rantCounter>20){break;}
+                }
+            }else if(jsonObj["result"] == "deleted"){
+                document.body.innerHTML = jsonObj["message"];
+            }else{
+                console.log("I got an error");
+                document.getElementById("errorBox").innerHTML = jsonObj["result"];
+            }
+            
+        }
+        startRecordButton.addEventListener("click", async () => {
+            console.log(recording);
+            if(!recording){
+            recording=true;
+            startRecordButton.src="stoprec.png";
+            recorder.start();
+            recorder.addEventListener("dataavailable", async (event) => {
+                var chunks = []   
+                chunks.push(event.data);
+                var blob = new Blob(chunks, {type: "audio/webm" });
+                if (blob.size != oldblob.size){
+                    var toSend = new Object();
+                    toSend.userID = userID;
+                    toSend.action = "processVoice";
+                    toSend.language = languagelist[languageChoice.value];
+                    var jsonToSend = JSON.stringify(toSend);
+                    socket.send(jsonToSend);
+                    socket.send(blob);
+                    oldblob = blob;
+                }
+            });
+                console.log("Your microphone audio is being recorded locally.");
+            }else{
+                recording=false;
+                startRecordButton.src="rec.png";
+                recorder.stop();
+                console.log("Your microphone audio has been successfully recorded locally.");
+            }
+        });
+    </script>
+</html>

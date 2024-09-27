@@ -1,0 +1,29 @@
+<html>
+<body>
+</body>
+<script>
+var socket = new WebSocket("wss://carriertech.uk:8008/");
+socket.onmessage = function(event){
+    var jsonObj = JSON.parse(event.data)
+    document.body.innerHTML = jsonObj["result"]
+    }
+    
+socket.onopen = function(e) {
+       var url= window.location.href;
+    var urlArray = url.split("?")[1];
+    var vArray = urlArray.split("&");
+
+    var toSend = new Object();
+    toSend.action = "validate";
+    for (let i = 0; i<vArray.length; i++){
+        let tA = vArray[i].split("=");
+        toSend[tA[0]] = tA[1];
+    }
+    var jsonToSend = JSON.stringify(toSend);
+    console.log(jsonToSend);
+    socket.send(jsonToSend);
+   
+};
+
+</script>
+</html>
